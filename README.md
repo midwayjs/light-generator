@@ -22,10 +22,15 @@ await generator.run({
 简单的来说，规则是一个函数，参数为当前文件路径，用于对当前文件进行操作。
 
 ```ts
-import {LightGenerator, ignoreRule} from 'light-generator';
+import {LightGenerator} from 'light-generator';
+
+const customRule = async (currentFilePath) => {
+  // TODO
+}
+
 const generator = new LightGenerator({
   templatePath: 'npm://xxxx',
-  rule: [ignoreRule]
+  rule: [customRule]
 });
 ```
 
