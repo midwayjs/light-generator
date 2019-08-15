@@ -19,6 +19,21 @@ await generator.run({
 
 生成器可以在生成完模板文件后，做一些自定义的操作，比如替换内容，修改文件名等。
 
+简单的来说，规则是一个函数，参数为当前文件路径，用于对当前文件进行操作。
+
+```ts
+import {LightGenerator, ignoreRule} from 'light-generator';
+const generator = new LightGenerator({
+  templatePath: 'npm://xxxx',
+  rule: [ignoreRule]
+});
+```
+
+内置了一些默认规则，比如
+
+- ignoreRule： 用于一些可能会被忽略的文件，在模板文件前缀加入下划线（_），执行此规则会移除该下划线
+
+
 ```ts
 import {LightGenerator, ignoreRule} from 'light-generator';
 const generator = new LightGenerator({
