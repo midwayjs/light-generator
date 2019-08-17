@@ -1,10 +1,9 @@
-import untildify from 'untildify';
-import { join } from 'path';
-import { downloadTemplateFromRepo } from './util/download';
-import { dirExistsSync } from './util/dirExistsSync';
-import { DirectoryCopyWarker } from './util/copyDirContents';
-import { renameService } from './util/renameService';
+import { DirectoryCopyWalker } from './util/copyDirContents';
 import { CopyRule, CopyWalker } from './interface';
+import { NpmPatternGenerator } from './generator/NpmPatternGenerator';
+import { UrlPatternGenerator } from './generator/UrlPatternGenerator';
+import { LocalPatternGenerator } from './generator/LocalPatternGenerator';
+import { ignoreRule, replaceRule } from './rule';
 
 export class LightGenerator {
 
@@ -12,46 +11,46 @@ export class LightGenerator {
   copyWalker: CopyWalker;
 
   constructor(options: {
-    templatePath: string;
-    templateUrl: string;
-    templateName: string;
-    targetPath: string;
-    copyRule: CopyRule[];
-  }) {
+    disableDefaultRule: boolean;
+    copyRule?: CopyRule[];
+  } = { disableDefaultRule: false }) {
     this.options = options;
-    this.copyWalker = new DirectoryCopyWarker(this.options.copyRule);
-  }
-
-  async run(replaceArgs) {
-    if ('templateUrl' in this.options) {
-      const serviceName = await downloadTemplateFromRepo(
-        this.copyWalker,
-        this.options[ 'templateUrl' ],
-        this.options.templateName,
-        this.options.targetPath
-      );
-      const message = [
-        `Successfully installed "${serviceName}" `,
-        `${this.options.templateName &&
-        this.options.templateName !== serviceName ? `as "${this.options.templateName}"` : ''}`,
-      ].join('');
-
-      console.log(message);
-    } else if ('templatePath' in this.options) {
-      // Copying template from a local directory
-      const servicePath = this.options.targetPath
-        ? untildify(this.options.targetPath)
-        : join(process.cwd(), this.options.templateName);
-      if (dirExistsSync(servicePath)) {
-        const errorMessage = `A folder named "${servicePath}" already exists.`;
-        throw new Error(errorMessage);
-      }
-      await this.copyWalker.copy(untildify(this.options[ 'templatePath' ]), servicePath, {
-        noLinks: true,
-      });
-      if (this.options.templateName) {
-        renameService(this.options.templateName, servicePath);
-      }
+    this.copyWalker = new DirectoryCopyWalker(this.options);
+    if (!this.options.disableDefaultRule) {
+      this.addDefaultCopyRule();
     }
   }
+
+  addDefaultCopyRule() {
+    this.copyWalker.addCopyRule(replaceRule);
+    this.copyWalker.addCopyRule(ignoreRule);
+  }
+
+  defineLocalPath(options: { templateName?: string; templatePath: string; targetPath: string; }) {
+    return new LocalPatternGenerator({
+      templateUri: options.templatePath,
+      targetPath: options.targetPath,
+      templateName: options.templateName,
+      copyWalker: this.copyWalker,
+    });
+  }
+
+  defineRemoteUrl(options: { templateUrl: string; targetPath: string; templateName: string; }) {
+    return new UrlPatternGenerator({
+      templateUri: options.templateUrl,
+      targetPath: options.targetPath,
+      templateName: options.templateName,
+      copyWalker: this.copyWalker,
+    });
+  }
+
+  defineNpmPackage(options: { npmPackage: string; targetPath: string; npmClient: string; }) {
+    return new NpmPatternGenerator({
+      templateUri: options.npmPackage,
+      targetPath: options.targetPath,
+      copyWalker: this.copyWalker,
+      npmClient: options.npmClient || 'npm'
+    });
+  }
+
 }

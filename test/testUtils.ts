@@ -3,7 +3,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as os from 'os';
-import * as crypto from 'crypto';
+import crypto from 'crypto';
 
 export const tmpDirCommonPath = path.join(
   os.tmpdir(),

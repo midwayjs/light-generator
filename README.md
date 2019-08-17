@@ -1,6 +1,12 @@
 # light generator
 
-一个非常轻量的模板生成器，用于各种脚手架的生成。
+一个非常轻量的脚手架生成器，用于各种脚手架的生成。
+
+核心功能：
+
+- 获取模板到本地（支持本地模板，github 地址，或者npm 地址）
+- 拷贝到指定的用户路径
+- 执行自定义规则（比如替换文件名等）
 
 ## 使用
 
@@ -10,6 +16,7 @@ import {LightGenerator} from 'light-generator';
 const generator = new LightGenerator({
   templatePath: 'npm://xxxx'
 });
+
 await generator.run({
   name: 'demo'
 });

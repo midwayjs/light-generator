@@ -165,12 +165,6 @@ export function parseRepoURL(inputUrl) {
   }
 }
 
-/**
- * @param {string} inputUrl
- * @param {string} [templateName]
- * @param {string} [path]
- * @returns {Promise}
- */
 export async function downloadTemplateFromRepo(copyWalker: CopyWalker, inputUrl: string, templateName: string, downloadPath: string) {
   const repoInformation = parseRepoURL(inputUrl);
 
