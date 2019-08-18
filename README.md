@@ -13,8 +13,9 @@
 ```ts
 import {LightGenerator} from 'light-generator';
 
-const generator = new LightGenerator({
-  templatePath: 'npm://xxxx'
+const generator = new LightGenerator().defineLocalPath({
+  templatePath: join(__dirname, './fixtures/boilerplate-0'),
+  targetPath,
 });
 
 await generator.run({
@@ -36,7 +37,6 @@ const customRule = async (currentFilePath) => {
 }
 
 const generator = new LightGenerator({
-  templatePath: 'npm://xxxx',
   rule: [customRule]
 });
 ```
@@ -44,7 +44,7 @@ const generator = new LightGenerator({
 内置了一些默认规则，比如
 
 - ignoreRule： 用于一些可能会被忽略的文件，在模板文件前缀加入下划线（_），执行此规则会移除该下划线
-
+- replaceRule: 用于替换文本内容
 
 ```ts
 import {LightGenerator, ignoreRule} from 'light-generator';
@@ -57,4 +57,4 @@ const generator = new LightGenerator({
 
 ## 其他
 
-此模块核心代码从 serverless 模块中抽取。
+此模块部门核心代码从 serverless 模块中抽取。

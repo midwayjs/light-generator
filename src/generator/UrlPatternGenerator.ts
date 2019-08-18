@@ -19,7 +19,8 @@ export class UrlPatternGenerator extends CommonGenerator {
     console.log(message);
   }
 
-  async getParameterList(): Promise<any> {
-    return undefined;
+  getTemplatePath(): string {
+    return '';
   }
+
 }

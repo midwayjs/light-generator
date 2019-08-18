@@ -44,7 +44,7 @@ export class LightGenerator {
     });
   }
 
-  defineNpmPackage(options: { npmPackage: string; targetPath: string; npmClient: string; }) {
+  defineNpmPackage(options: { npmPackage: string; targetPath: string; npmClient?: string; }) {
     return new NpmPatternGenerator({
       templateUri: options.npmPackage,
       targetPath: options.targetPath,

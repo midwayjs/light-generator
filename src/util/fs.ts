@@ -13,6 +13,15 @@ export function fileExistsSync(filePath) {
   }
 }
 
+export function dirExistsSync(dirPath) {
+  try {
+    const stats = fse.statSync(dirPath);
+    return stats.isDirectory();
+  } catch (e) {
+    return false;
+  }
+}
+
 export function readFileSync(filePath) {
   const contents = fse.readFileSync(filePath);
   return parse(filePath, contents);
