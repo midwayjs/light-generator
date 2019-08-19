@@ -7,6 +7,10 @@ import * as fse from 'fs-extra';
 import { dirExistsSync } from '../util/fs';
 import * as tar from 'tar';
 
+function renamePackageName(pkgName) {
+  return pkgName.replace(/^@(\w+)\//, '$1-');
+}
+
 export class NpmPatternGenerator extends CommonGenerator {
 
   npmClient: string;
@@ -25,7 +29,7 @@ export class NpmPatternGenerator extends CommonGenerator {
       cwd: process.env.HOME
     }).toString();
     const remoteVersion = JSON.parse(data)[ 'latest' ];
-    this.pkgRootName = `${this.templateUri}-${remoteVersion}`;
+    this.pkgRootName = `${renamePackageName(this.templateUri)}-${remoteVersion}`;
     const currentPkgRoot = this.getTemplatePath();
     if (!dirExistsSync(currentPkgRoot)) {
       const cmd = `${this.npmClient} pack ${this.templateUri}@${remoteVersion} | mkdir ${this.pkgRootName}`;

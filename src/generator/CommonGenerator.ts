@@ -51,8 +51,8 @@ export abstract class CommonGenerator {
    * 获取参数列表
    */
   async getParameterList() {
-    const templateRoot = this.getTemplatePath();
     const templateConfig = await this.getTemplateConfig() as TemplatePackageConfig;
+    const templateRoot = this.getTemplatePath();
     if (templateConfig) {
       const parameterFile = join(templateRoot, templateConfig.replaceParameter as string);
       if (fileExistsSync(parameterFile)) {

@@ -91,5 +91,15 @@ describe('/test/generator.test.ts', () => {
       const contents = fse.readFileSync(join(targetPath, 'index.js'), 'utf-8');
       assert(/hello world/.test(contents));
     });
+
+    it('should get parameterList from npm package', async () => {
+      const npmGenerator = new LightGenerator().defineNpmPackage({
+        npmPackage: 'egg-boilerplate-simple',
+        targetPath
+      });
+
+      const args = await npmGenerator.getParameterList();
+      assert(args);
+    });
   });
 });
