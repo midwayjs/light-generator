@@ -161,4 +161,4 @@ const generator = new LightGenerator({
 
 ## 其他
 
-此模块部门核心代码从 serverless 模块中抽取。
+此模块部分核心代码从 serverless 模块中抽取。
