@@ -1,4 +1,10 @@
 
+1.0.1 / 2019-08-19
+==================
+
+  * fix: get npm package before get path (#2)
+  * chore: add history file
+
 1.0.0 / 2019-08-19
 ==================
 
