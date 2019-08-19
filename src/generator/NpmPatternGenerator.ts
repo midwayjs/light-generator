@@ -7,7 +7,7 @@ import * as fse from 'fs-extra';
 import { dirExistsSync } from '../util/fs';
 import * as tar from 'tar';
 
-function renamePackageName(pkgName) {
+export function renamePackageName(pkgName) {
   return pkgName.replace(/^@(\w+)\//, '$1-');
 }
 
