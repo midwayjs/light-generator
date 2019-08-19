@@ -1,6 +1,6 @@
 {
   "name": "light-generator",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "light generator for generate a boilerplate",
   "main": "dist/index",
   "typings": "dist/index.d.ts",
@@ -27,7 +27,8 @@
     "build": "npm run lint && midway-bin build -c",
     "lint": "./node_modules/.bin/tslint --format prose -c ./tslint.json src/**/*.ts test/**/*.ts",
     "test": "npm run lint && NODE_ENV=test midway-bin test --ts --full-trace",
-    "cov": "NODE_ENV=unittest midway-bin cov --ts"
+    "cov": "NODE_ENV=unittest midway-bin cov --ts",
+    "prepublishOnly": "npm run build"
   },
   "files": [
     "dist",
