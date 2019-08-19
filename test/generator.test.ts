@@ -3,6 +3,7 @@ import { join } from 'path';
 import * as fse from 'fs-extra';
 import assert from 'assert';
 import { tmpdir } from 'os';
+import { renamePackageName } from '../src/generator/NpmPatternGenerator';
 
 describe('/test/generator.test.ts', () => {
 
@@ -90,6 +91,22 @@ describe('/test/generator.test.ts', () => {
       await npmGenerator.run();
       const contents = fse.readFileSync(join(targetPath, 'index.js'), 'utf-8');
       assert(/hello world/.test(contents));
+    });
+
+    it('should get parameterList from npm package', async () => {
+      const npmGenerator = new LightGenerator().defineNpmPackage({
+        npmPackage: 'egg-boilerplate-simple',
+        targetPath
+      });
+
+      const args = await npmGenerator.getParameterList();
+      assert(args);
+    });
+
+    it('should transform package name', () => {
+      assert(renamePackageName('@ali/midway') === 'ali-midway');
+      assert(renamePackageName('@ali.midway') === '@ali.midway');
+      assert(renamePackageName('@scope/midway') === 'scope-midway');
     });
   });
 });
