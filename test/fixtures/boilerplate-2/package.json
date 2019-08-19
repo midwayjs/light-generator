@@ -1,0 +1,13 @@
+{
+  "name": "boilerplate-1",
+  "version": "1.0.0",
+  "dependencies": {
+
+  },
+  "boilerplateConfig": {
+    "root": "template",
+    "replaceFile": [
+      "src/index.ts"
+    ]
+  }
+}

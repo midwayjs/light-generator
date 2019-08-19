@@ -6,7 +6,7 @@ import * as path from 'path';
 import { writeFileSync, readFileSync } from '../src/util/fs';
 import { parseRepoURL } from '../src/util/download';
 import { getTmpDirPath } from './testUtils';
-import { DirectoryCopyWarker } from '../src/util/copyDirContents';
+import { DirectoryCopyWalker } from '../src/util/copyDirContents';
 
 describe('downloadTemplateFromRepo', () => {
   let downloadTemplateFromRepo;
@@ -15,7 +15,7 @@ describe('downloadTemplateFromRepo', () => {
 
   let servicePath;
   let newServicePath;
-  const copyWalker = new DirectoryCopyWarker();
+  const copyWalker = new DirectoryCopyWalker();
 
   beforeEach(() => {
     const tmpDir = getTmpDirPath();

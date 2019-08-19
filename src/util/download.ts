@@ -2,7 +2,7 @@ import * as URL from 'url';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
-import { dirExistsSync } from './dirExistsSync';
+import { dirExistsSync } from './fs';
 import download from 'download';
 import * as qs from 'querystring';
 import { renameService } from './renameService';
@@ -165,12 +165,6 @@ export function parseRepoURL(inputUrl) {
   }
 }
 
-/**
- * @param {string} inputUrl
- * @param {string} [templateName]
- * @param {string} [path]
- * @returns {Promise}
- */
 export async function downloadTemplateFromRepo(copyWalker: CopyWalker, inputUrl: string, templateName: string, downloadPath: string) {
   const repoInformation = parseRepoURL(inputUrl);
 

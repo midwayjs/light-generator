@@ -1,8 +1,5 @@
 import * as jc from 'json-cycle';
 import * as YAML from 'js-yaml';
-// import * as _ from 'lodash';
-
-// const cloudFormationSchema = require('../../plugins/aws/lib/cloudformationSchema');
 
 const loadYaml = (contents, options) => {
   let data;
@@ -23,11 +20,7 @@ export function parse(filePath, contents) {
     const options = {
       filename: filePath,
     };
-    let result = loadYaml(contents.toString(), options);
-    if (result.error && result.error.name === 'YAMLException') {
-      // _.merge(options, { schema: cloudFormationSchema.schema });
-      result = loadYaml(contents.toString(), options);
-    }
+    const result = loadYaml(contents.toString(), options);
     if (result.error) {
       throw result.error;
     }

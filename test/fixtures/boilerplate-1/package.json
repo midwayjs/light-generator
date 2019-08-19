@@ -1,0 +1,15 @@
+{
+  "name": "boilerplate-1",
+  "version": "1.0.0",
+  "dependencies": {
+
+  },
+  "boilerplateConfig": {
+    "root": "boilerplate",
+    "replaceParameter": "index.js",
+    "replaceFile": [
+      "README.md",
+      "_test.js"
+    ]
+  }
+}
