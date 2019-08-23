@@ -79,11 +79,6 @@ export abstract class CommonGenerator {
   async run(replaceParameter = {}) {
     // Copying template from a local directory
     const servicePath = untildify(this.targetPath);
-    if (dirExistsSync(servicePath)) {
-      const errorMessage = `A folder named "${servicePath}" already exists.`;
-      throw new Error(errorMessage);
-    }
-
     const templateConfig = await this.getTemplateConfig() as TemplatePackageConfig;
     let templateRoot = this.getTemplatePath();
     if (templateConfig) {
