@@ -5,6 +5,17 @@ import assert from 'assert';
 import { tmpdir } from 'os';
 import { renamePackageName } from '../src/generator/NpmPatternGenerator';
 
+async function assertThrowsAsync(fn, regExp) {
+  let f = () => { };
+  try {
+    await fn();
+  } catch (e) {
+    f = () => { throw e; };
+  } finally {
+    assert.throws(f, regExp);
+  }
+}
+
 describe('/test/generator.test.ts', () => {
 
   const targetPath = join(__dirname, './tmp');
@@ -63,6 +74,38 @@ describe('/test/generator.test.ts', () => {
 
       const contents = fse.readFileSync(join(targetPath, 'src/index.ts'), 'utf-8');
       assert(/hello/.test(contents));
+    });
+
+    it('should generate template in not empty dir', async () => {
+      const newTargetPath = join(__dirname, './tmp_new');
+      fse.ensureDirSync(newTargetPath);
+      fse.writeFileSync(join(newTargetPath, 'a.js'), 'hello');
+
+      const localGenerator = new LightGenerator().defineLocalPath({
+        templatePath: join(__dirname, './fixtures/boilerplate-0'),
+        targetPath: newTargetPath,
+      });
+
+      await assertThrowsAsync(async () => {
+        await localGenerator.run();
+      }, /A folder named/);
+
+      fse.removeSync(newTargetPath);
+    });
+
+    it('should generate template in empty dir', async () => {
+      const newTargetPath = join(__dirname, './tmp_new');
+      fse.ensureDirSync(newTargetPath);
+
+      const localGenerator = new LightGenerator().defineLocalPath({
+        templatePath: join(__dirname, './fixtures/boilerplate-0'),
+        targetPath: newTargetPath,
+      });
+
+      await localGenerator.run();
+      assert(fse.existsSync(join(newTargetPath, 'package.json')));
+      assert(fse.existsSync(join(newTargetPath, 'README.md')));
+      fse.removeSync(newTargetPath);
     });
   });
 

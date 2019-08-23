@@ -6,6 +6,7 @@
   "typings": "dist/index.d.ts",
   "dependencies": {
     "download": "^5.0.2",
+    "empty-dir": "^2.0.0",
     "fs-extra": "^8.0.1",
     "js-yaml": "^3.13.1",
     "json-cycle": "^1.3.0",
