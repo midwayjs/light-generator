@@ -1,4 +1,11 @@
 
+1.0.2 / 2019-08-23
+==================
+
+  * Merge pull request #5 from midwayjs/empty_dir
+  * feat: support generate in a empty dir
+  * 支持当前目录初始化代码 (#3)
+
 1.0.1 / 2019-08-19
 ==================
 
