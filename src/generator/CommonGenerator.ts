@@ -1,6 +1,6 @@
 import { CommonGeneratorOptions, CopyWalker, TemplatePackageConfig } from '../interface';
 import { join } from 'path';
-import { dirExistsSync, fileExistsSync } from '../util/fs';
+import { dirExistsSync, fileExistsSync, dirIsEmptySync } from '../util/fs';
 import untildify from 'untildify';
 
 export abstract class CommonGenerator {
@@ -79,6 +79,10 @@ export abstract class CommonGenerator {
   async run(replaceParameter = {}) {
     // Copying template from a local directory
     const servicePath = untildify(this.targetPath);
+    if (dirExistsSync(servicePath) && !dirIsEmptySync(servicePath)) {
+      const errorMessage = `A folder named "${servicePath}" already exists and not empty.`;
+      throw new Error(errorMessage);
+    }
     const templateConfig = await this.getTemplateConfig() as TemplatePackageConfig;
     let templateRoot = this.getTemplatePath();
     if (templateConfig) {

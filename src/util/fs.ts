@@ -49,3 +49,13 @@ export function writeFileSync(filePath, conts, cycles?) {
 
   return fse.writeFileSync(filePath, contents);
 }
+
+export function dirIsEmptySync(path) {
+  try {
+    const stats = fse.readdirSync(path);
+    return stats.length === 0;
+  }
+  catch (e) {
+    return false;
+  }
+}
