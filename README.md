@@ -111,7 +111,7 @@ const generator = new LightGenerator({
 内置了一些默认规则，比如
 
 - ignoreRule： 用于一些可能会被忽略的文件，在模板文件前缀加入下划线（_），执行此规则会移除该下划线
-- replaceRule: 用于替换文本内容
+- replaceRule: 用于将变量替换掉带 {{}} 的文本内容，或者文件名
 
 这些规则默认已经内置，并且生效。
 
