@@ -9,7 +9,9 @@
     "replaceParameter": "index.js",
     "replaceFile": [
       "README.md",
-      "_test.js"
+      "_test.js",
+      "{{service}}.js",
+      "_{{service}}_1.js"
     ]
   }
 }

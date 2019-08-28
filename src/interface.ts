@@ -28,4 +28,5 @@ export interface CopyRuleOptions {
   targetRelativeFile: string;
   replaceParameter: object;
   templateConfig: TemplatePackageConfig;
+  filenameMapping: Map<string, string>;
 }
