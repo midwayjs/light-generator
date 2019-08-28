@@ -22,6 +22,7 @@ export class DirectoryCopyWalker implements CopyWalker {
     templateConfig: {}
   }) {
     const fullFilesPaths = walkDirSync(srcDir, options);
+    const filenameMapping = new Map();
 
     for (const fullFilePath of fullFilesPaths) {
       const relativeFilePath = path.relative(srcDir, fullFilePath);
@@ -37,7 +38,8 @@ export class DirectoryCopyWalker implements CopyWalker {
             root: destDir,
             replaceFile: [],
             replaceParameter: {},
-          }
+          },
+          filenameMapping,
         });
       }
     }

@@ -111,7 +111,7 @@ const generator = new LightGenerator({
 内置了一些默认规则，比如
 
 - ignoreRule： 用于一些可能会被忽略的文件，在模板文件前缀加入下划线（_），执行此规则会移除该下划线
-- replaceRule: 用于替换文本内容
+- replaceRule: 用于将变量替换掉带 {{}} 的文本内容，或者文件名
 
 这些规则默认已经内置，并且生效。
 
@@ -156,7 +156,7 @@ const generator = new LightGenerator({
 
 - root { string } 设置模板根路径，相对于包根路径，如果配置了 `boilerplateConfig` 字段，默认为 `boilerplate` 目录
 - replaceParameter { string } 用户可替换参数文件路径，相对于包根路径，默认为 `index.js`
-- replaceFile { string | string []} 需要替换的文件列表，默认为 `README.md`，相对于 root
+- replaceFile { string | string []} 需要替换的文件列表，默认为 `README.md`，相对于 root，请一定填写规则修改前的文件名
 
 
 ## 其他
