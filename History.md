@@ -1,4 +1,11 @@
 
+1.2.0 / 2019-09-06
+==================
+
+  * chore: update case
+  * chore: update case
+  * feat: add glob pattern
+
 1.1.0 / 2019-08-29
 ==================
 
