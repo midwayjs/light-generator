@@ -151,7 +151,8 @@ const generator = new LightGenerator({
     "replaceParameter": "index.js",
     "replaceFile": [
       "src/index.ts"
-    ]
+    ],
+    "rule": []
   }
 }
 ```
@@ -175,7 +176,7 @@ const generator = new LightGenerator({
 - root { string } 设置模板根路径，相对于包根路径，如果配置了 `boilerplateConfig` 字段，默认为 `boilerplate` 目录
 - replaceParameter { string } 用户可替换参数文件路径，相对于包根路径，默认为 `index.js`
 - replaceFile { string []} 需要替换的文件列表，默认为 `README.md`，相对于 root，请一定填写规则修改前的文件名，支持 [minimatch](https://github.com/isaacs/minimatch) 格式的通配符
-
+- rule { string []} 只对本模板生效自定义 copy 规则，内容为可以 require 的地址，内容格式为 `module.exports = async () => {}` 
 
 ## 其他
 

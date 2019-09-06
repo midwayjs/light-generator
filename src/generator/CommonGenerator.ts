@@ -38,6 +38,7 @@ export abstract class CommonGenerator {
             }
             config.replaceParameter = config.replaceParameter as string || 'index.js';
             config.root = join(templateRoot, config.root || 'boilerplate');
+            config.rule = config.rule || [];
             this.templateConfig = config;
           }
         } catch (err) {
@@ -88,18 +89,27 @@ export abstract class CommonGenerator {
       }
     }
 
-    const templateConfig = await this.getTemplateConfig() as TemplatePackageConfig;
+    let templateConfig = await this.getTemplateConfig() as TemplatePackageConfig;
     let templateRoot = this.getTemplatePath();
+    const packageRoot = templateRoot;
     if (templateConfig) {
       templateRoot = templateConfig.root;
       if (!dirExistsSync(templateRoot)) {
         throw new Error(`Directory ${templateRoot} not exist`);
       }
+    } else {
+      templateConfig = {
+        replaceParameter: 'index.js',
+        root: templateRoot,
+        replaceFile: [ 'README.md' ],
+        rule: [],
+      };
     }
 
     const defaultArgsValue = await this.getDefaultParameterValue();
 
     await this.copyWalker.copy(templateRoot, servicePath, {
+      packageRoot,
       replaceParameter: Object.assign(defaultArgsValue, replaceParameter),
       templateConfig,
       noLinks: true,

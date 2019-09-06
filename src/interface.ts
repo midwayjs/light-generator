@@ -20,6 +20,7 @@ export interface TemplatePackageConfig {
   root: string;
   replaceFile: string[];
   replaceParameter: string | object;
+  rule: string[];
 }
 
 export interface CopyRuleOptions {

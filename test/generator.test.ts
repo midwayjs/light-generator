@@ -25,7 +25,7 @@ describe('/test/generator.test.ts', () => {
   });
 
   afterEach(async () => {
-    // await fse.remove(targetPath);
+    await fse.remove(targetPath);
   });
 
   describe('local generator', () => {
@@ -67,6 +67,28 @@ describe('/test/generator.test.ts', () => {
 
       contents = fse.readFileSync(join(targetPath, 'myService_1.js'), 'utf-8');
       assert(/myService/.test(contents));
+    });
+
+    it('should generate template with custom rule', async () => {
+      const localGenerator = new LightGenerator().defineLocalPath({
+        templatePath: join(__dirname, './fixtures/boilerplate-3'),
+        targetPath
+      });
+      await localGenerator.run({
+        name: 'my demo',
+        description: 'hello',
+        service: 'myService'
+      });
+      assert(fse.existsSync(join(targetPath, 'test.js')));
+      assert(fse.existsSync(join(targetPath, 'test_22.js')));
+      assert(fse.existsSync(join(targetPath, 'package.json')));
+      assert(fse.existsSync(join(targetPath, 'package_22.json')));
+      assert(fse.existsSync(join(targetPath, 'src/index.ts')));
+      assert(fse.existsSync(join(targetPath, 'src/index_22.ts')));
+      assert(fse.existsSync(join(targetPath, 'myService.js')));
+      assert(fse.existsSync(join(targetPath, 'myService_22.js')));
+      assert(fse.existsSync(join(targetPath, 'myService_1.js')));
+      assert(fse.existsSync(join(targetPath, 'myService_1_22.js')));
     });
 
     it('should generate template with custom root', async () => {
