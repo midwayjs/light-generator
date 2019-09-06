@@ -21,6 +21,7 @@ export interface TemplatePackageConfig {
   replaceFile: string[];
   replaceParameter: string | object;
   rule: string[];
+  afterAll: string;
 }
 
 export interface CopyRuleOptions {

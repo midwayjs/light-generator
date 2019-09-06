@@ -89,6 +89,9 @@ describe('/test/generator.test.ts', () => {
       assert(fse.existsSync(join(targetPath, 'myService_22.js')));
       assert(fse.existsSync(join(targetPath, 'myService_1.js')));
       assert(fse.existsSync(join(targetPath, 'myService_1_22.js')));
+
+      // test after
+      assert(fse.existsSync(join(targetPath, 'tttt.js')));
     });
 
     it('should generate template with custom root', async () => {

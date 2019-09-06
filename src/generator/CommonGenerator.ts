@@ -1,5 +1,5 @@
 import { CommonGeneratorOptions, CopyWalker, TemplatePackageConfig } from '../interface';
-import { join } from 'path';
+import { isAbsolute, join } from 'path';
 import { dirExistsSync, fileExistsSync } from '../util/fs';
 import untildify from 'untildify';
 import emptyDir from 'empty-dir';
@@ -89,7 +89,7 @@ export abstract class CommonGenerator {
       }
     }
 
-    let templateConfig = await this.getTemplateConfig() as TemplatePackageConfig;
+    let templateConfig = await this.getTemplateConfig() as Partial<TemplatePackageConfig>;
     let templateRoot = this.getTemplatePath();
     const packageRoot = templateRoot;
     if (templateConfig) {
@@ -114,6 +114,20 @@ export abstract class CommonGenerator {
       templateConfig,
       noLinks: true,
     });
+
+    if (templateConfig.afterAll) {
+      const afterScript = isAbsolute(templateConfig.afterAll) ? require(templateConfig.afterAll)
+        : require(join(packageRoot, templateConfig.afterAll));
+      if (afterScript && typeof afterScript === 'function') {
+        await afterScript({
+          sourceRoot: packageRoot,
+          templateRoot,
+          targetRoot: servicePath,
+          replaceParameter: Object.assign(defaultArgsValue, replaceParameter),
+          templateConfig,
+        });
+      }
+    }
   }
 
   abstract getTemplatePath(): string;
