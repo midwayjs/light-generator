@@ -18,7 +18,7 @@ export interface NpmGeneratorOptions extends CommonGeneratorOptions {
 
 export interface TemplatePackageConfig {
   root: string;
-  replaceFile: string | string[];
+  replaceFile: string[];
   replaceParameter: string | object;
 }
 
