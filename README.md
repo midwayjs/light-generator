@@ -152,11 +152,25 @@ const generator = new LightGenerator({
 }
 ```
 
+也可以支持通配符
+
+```json
+{
+  "boilerplateConfig": {
+    "root": "template",
+    "replaceParameter": "index.js",
+    "replaceFile": [
+      "*.ts"
+    ]
+  }
+}
+```
+
 参数
 
 - root { string } 设置模板根路径，相对于包根路径，如果配置了 `boilerplateConfig` 字段，默认为 `boilerplate` 目录
 - replaceParameter { string } 用户可替换参数文件路径，相对于包根路径，默认为 `index.js`
-- replaceFile { string | string []} 需要替换的文件列表，默认为 `README.md`，相对于 root，请一定填写规则修改前的文件名
+- replaceFile { string []} 需要替换的文件列表，默认为 `README.md`，相对于 root，请一定填写规则修改前的文件名，支持 [minimatch](https://github.com/isaacs/minimatch) 格式的通配符
 
 
 ## 其他
