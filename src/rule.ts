@@ -1,6 +1,7 @@
 import * as fse from 'fs-extra';
 import { CopyRuleOptions } from './interface';
 import { join, relative } from 'path';
+import minimatch from 'minimatch';
 
 /**
  * 移除文件下划线
@@ -30,7 +31,7 @@ const pattern = /\{\{(\w*[:]*[=]*\w+)\}\}(?!})/g;
  */
 export const replaceRule = async (currentFilePath, copyRuleOptions: CopyRuleOptions) => {
   const replaceArgs = copyRuleOptions.replaceParameter || {};
-  if (copyRuleOptions.templateConfig.replaceFile.includes(copyRuleOptions.targetRelativeFile)) {
+  if (includeReplaceContent(copyRuleOptions.templateConfig.replaceFile, copyRuleOptions.targetRelativeFile)) {
     // 如果当前文件在替换列表中，则进行内容替换
     const contents = fse.readFileSync(currentFilePath, 'utf-8')
       .replace(pattern, (match, key, value) => {
@@ -49,5 +50,19 @@ export const replaceRule = async (currentFilePath, copyRuleOptions: CopyRuleOpti
     // 一定要更新文件名，不然后续处理找不到
     copyRuleOptions.filenameMapping.set(currentFilePath, newFilePath);
   }
-
 };
+
+// 匹配是否需要替换内容
+function includeReplaceContent(replaceFilePatternList: string[], targetRelativeFile) {
+  for (const pattern of replaceFilePatternList) {
+    if (typeof pattern === 'string' && !/\*/.test(pattern)) {
+      if (pattern === targetRelativeFile) {
+        return true;
+      }
+    } else {
+      return minimatch(targetRelativeFile, pattern, { matchBase: true });
+    }
+  }
+
+  return false;
+}
