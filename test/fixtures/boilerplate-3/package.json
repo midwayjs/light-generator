@@ -1,0 +1,19 @@
+{
+  "name": "boilerplate-3",
+  "version": "1.0.0",
+  "dependencies": {
+
+  },
+  "boilerplateConfig": {
+    "root": "boilerplate",
+    "replaceParameter": "index.js",
+    "replaceFile": [
+      "README.md",
+      "*.js"
+    ],
+    "rule": [
+      "./custom.js"
+    ],
+    "afterAll": "after.js"
+  }
+}

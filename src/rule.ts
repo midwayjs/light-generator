@@ -18,6 +18,7 @@ export const ignoreRule = async (currentFilePath, copyRuleOptions: CopyRuleOptio
     } else {
       const newName = join(copyRuleOptions.targetDir, copyRuleOptions.targetRelativeFile.replace('_', ''));
       await fse.rename(currentFilePath, newName);
+      copyRuleOptions.filenameMapping.set(currentFilePath, newName);
     }
   }
 };

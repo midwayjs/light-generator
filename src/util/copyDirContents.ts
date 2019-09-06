@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fse from 'fs-extra';
 import { walkDirSync } from './walkDirSync';
-import { CopyRule, CopyWalker } from '../interface';
+import { CopyRule, CopyWalker, TemplatePackageConfig } from '../interface';
 
 export class DirectoryCopyWalker implements CopyWalker {
 
@@ -17,12 +17,28 @@ export class DirectoryCopyWalker implements CopyWalker {
     this.rules.push(rule);
   }
 
-  async copy(srcDir, destDir, options = {
+  async copy(srcDir, destDir, options: {
+    packageRoot?: string;
+    replaceParameter: object;
+    templateConfig: Partial<TemplatePackageConfig>;
+  } = {
     replaceParameter: {},
     templateConfig: {}
   }) {
     const fullFilesPaths = walkDirSync(srcDir, options);
     const filenameMapping = new Map();
+
+    // add custom rule
+    if (options.templateConfig.rule && options.templateConfig.rule.length) {
+      for (const rule of options.templateConfig.rule) {
+        try {
+          const copyRule = path.isAbsolute(rule) ? require(rule) : require(path.join(options.packageRoot, rule));
+          this.addCopyRule(copyRule);
+        } catch (err) {
+          throw new Error(`load custom rule error, path = ${rule}`);
+        }
+      }
+    }
 
     for (const fullFilePath of fullFilesPaths) {
       const relativeFilePath = path.relative(srcDir, fullFilePath);
@@ -38,6 +54,7 @@ export class DirectoryCopyWalker implements CopyWalker {
             root: destDir,
             replaceFile: [],
             replaceParameter: {},
+            rule: []
           },
           filenameMapping,
         });
