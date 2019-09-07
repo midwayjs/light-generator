@@ -1,4 +1,11 @@
 
+1.3.0 / 2019-09-07
+==================
+
+  * feat: 增加执行完成后自定义脚本
+  * feat: support custom copy rule
+  * chore: update readme
+
 1.2.0 / 2019-09-06
 ==================
 
