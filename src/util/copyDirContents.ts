@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as fse from 'fs-extra';
 import { walkDirSync } from './walkDirSync';
 import { CopyRule, CopyWalker, TemplatePackageConfig } from '../interface';
+const debug = require('debug')('generator');
 
 export class DirectoryCopyWalker implements CopyWalker {
 
@@ -44,6 +45,7 @@ export class DirectoryCopyWalker implements CopyWalker {
       const relativeFilePath = path.relative(srcDir, fullFilePath);
       const targetFilePath = path.join(destDir, relativeFilePath);
       await fse.copy(fullFilePath, path.join(destDir, relativeFilePath));
+      debug(`-> ${relativeFilePath}`);
       for (const rule of this.rules) {
         await rule(targetFilePath, {
           templateDir: srcDir,

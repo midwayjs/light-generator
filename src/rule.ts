@@ -2,6 +2,7 @@ import * as fse from 'fs-extra';
 import { CopyRuleOptions } from './interface';
 import { join, relative } from 'path';
 import minimatch from 'minimatch';
+const debug = require('debug')('generator');
 
 /**
  * 移除文件下划线
@@ -15,10 +16,12 @@ export const ignoreRule = async (currentFilePath, copyRuleOptions: CopyRuleOptio
       const newName = join(copyRuleOptions.targetDir, relative(copyRuleOptions.targetDir, newFilePath).replace('_', ''));
       await fse.rename(newFilePath, newName);
       copyRuleOptions.filenameMapping.set(currentFilePath, newName);
+      debug(` * remove _ => ${newName}`);
     } else {
       const newName = join(copyRuleOptions.targetDir, copyRuleOptions.targetRelativeFile.replace('_', ''));
       await fse.rename(currentFilePath, newName);
       copyRuleOptions.filenameMapping.set(currentFilePath, newName);
+      debug(` * remove _ => ${newName}`);
     }
   }
 };
@@ -36,15 +39,17 @@ export const replaceRule = async (currentFilePath, copyRuleOptions: CopyRuleOpti
     // 如果当前文件在替换列表中，则进行内容替换
     const contents = fse.readFileSync(currentFilePath, 'utf-8')
       .replace(pattern, (match, key, value) => {
+        debug(` * replace content key => ${key}`);
         return replaceArgs[key];
       });
 
-    await fse.writeFileSync(currentFilePath, contents);
+    await fse.writeFile(currentFilePath, contents);
   }
 
   // 如果文件名需要替换
   if (new RegExp(pattern).test(currentFilePath)) {
     const newFilePath = currentFilePath.replace(pattern, (match, key, value) => {
+      debug(` * replace filename key => ${key}`);
       return replaceArgs[key];
     });
     await fse.move(currentFilePath, newFilePath);
@@ -61,7 +66,10 @@ function includeReplaceContent(replaceFilePatternList: string[], targetRelativeF
         return true;
       }
     } else {
-      return minimatch(targetRelativeFile, pattern, { matchBase: true });
+      const result = minimatch(targetRelativeFile, pattern, { matchBase: true });
+      if (result) {
+        return true;
+      }
     }
   }
 
