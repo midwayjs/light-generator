@@ -40,7 +40,7 @@ export const replaceRule = async (currentFilePath, copyRuleOptions: CopyRuleOpti
     const contents = fse.readFileSync(currentFilePath, 'utf-8')
       .replace(pattern, (match, key, value) => {
         debug(` * replace content key => ${key}`);
-        return replaceArgs[key];
+        return replaceArgs[key] || match;
       });
 
     await fse.writeFile(currentFilePath, contents);
