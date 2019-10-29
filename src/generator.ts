@@ -6,14 +6,15 @@ import { LocalPatternGenerator } from './generator/LocalPatternGenerator';
 import { ignoreRule, replaceRule } from './rule';
 
 export class LightGenerator {
-
   options;
   copyWalker: CopyWalker;
 
-  constructor(options: {
-    disableDefaultRule: boolean;
-    copyRule?: CopyRule[];
-  } = { disableDefaultRule: false }) {
+  constructor(
+    options: {
+      disableDefaultRule: boolean;
+      copyRule?: CopyRule[];
+    } = { disableDefaultRule: false }
+  ) {
     this.options = options;
     this.copyWalker = new DirectoryCopyWalker(this.options);
     if (!this.options.disableDefaultRule) {
@@ -26,7 +27,11 @@ export class LightGenerator {
     this.copyWalker.addCopyRule(ignoreRule);
   }
 
-  defineLocalPath(options: { templateName?: string; templatePath: string; targetPath: string; }) {
+  defineLocalPath(options: {
+    templateName?: string;
+    templatePath: string;
+    targetPath: string;
+  }) {
     return new LocalPatternGenerator({
       templateUri: options.templatePath,
       targetPath: options.targetPath,
@@ -35,7 +40,11 @@ export class LightGenerator {
     });
   }
 
-  defineRemoteUrl(options: { templateUrl: string; targetPath: string; templateName: string; }) {
+  defineRemoteUrl(options: {
+    templateUrl: string;
+    targetPath: string;
+    templateName: string;
+  }) {
     return new UrlPatternGenerator({
       templateUri: options.templateUrl,
       targetPath: options.targetPath,
@@ -44,13 +53,18 @@ export class LightGenerator {
     });
   }
 
-  defineNpmPackage(options: { npmPackage: string; targetPath: string; npmClient?: string; }) {
+  defineNpmPackage(options: {
+    npmPackage: string;
+    targetPath: string;
+    npmClient?: string;
+    registryUrl?: string;
+  }) {
     return new NpmPatternGenerator({
       templateUri: options.npmPackage,
       targetPath: options.targetPath,
       copyWalker: this.copyWalker,
-      npmClient: options.npmClient || 'npm'
+      npmClient: options.npmClient || 'npm',
+      registryUrl: options.registryUrl,
     });
   }
-
 }

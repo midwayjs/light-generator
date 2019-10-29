@@ -1,4 +1,7 @@
-export type CopyRule = (currentFile: string, copyRuleOptions: CopyRuleOptions) => void;
+export type CopyRule = (
+  currentFile: string,
+  copyRuleOptions: CopyRuleOptions
+) => void;
 
 export interface CopyWalker {
   addCopyRule(copyRule: CopyRule);
@@ -13,7 +16,8 @@ export interface CommonGeneratorOptions {
 }
 
 export interface NpmGeneratorOptions extends CommonGeneratorOptions {
-  npmClient: string;
+  npmClient?: string;
+  registryUrl?: string;
 }
 
 export interface TemplatePackageConfig {
