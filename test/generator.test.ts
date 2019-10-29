@@ -6,18 +6,19 @@ import { tmpdir } from 'os';
 import { renamePackageName } from '../src/generator/NpmPatternGenerator';
 
 async function assertThrowsAsync(fn, regExp) {
-  let f = () => { };
+  let f = () => {};
   try {
     await fn();
   } catch (e) {
-    f = () => { throw e; };
+    f = () => {
+      throw e;
+    };
   } finally {
     assert.throws(f, regExp);
   }
 }
 
 describe('/test/generator.test.ts', () => {
-
   const targetPath = join(__dirname, './tmp');
 
   beforeEach(async () => {
@@ -42,12 +43,12 @@ describe('/test/generator.test.ts', () => {
     it('should generate template with index', async () => {
       const localGenerator = new LightGenerator().defineLocalPath({
         templatePath: join(__dirname, './fixtures/boilerplate-1'),
-        targetPath
+        targetPath,
       });
       await localGenerator.run({
         name: 'my demo',
         description: 'hello',
-        service: 'myService'
+        service: 'myService',
       });
       assert(fse.existsSync(join(targetPath, 'test.js')));
       assert(fse.existsSync(join(targetPath, 'package.json')));
@@ -72,12 +73,12 @@ describe('/test/generator.test.ts', () => {
     it('should generate template with custom rule', async () => {
       const localGenerator = new LightGenerator().defineLocalPath({
         templatePath: join(__dirname, './fixtures/boilerplate-3'),
-        targetPath
+        targetPath,
       });
       await localGenerator.run({
         name: 'my demo',
         description: 'hello',
-        service: 'myService'
+        service: 'myService',
       });
       assert(fse.existsSync(join(targetPath, 'test.js')));
       assert(fse.existsSync(join(targetPath, 'test_22.js')));
@@ -97,16 +98,19 @@ describe('/test/generator.test.ts', () => {
     it('should generate template with custom root', async () => {
       const localGenerator = new LightGenerator().defineLocalPath({
         templatePath: join(__dirname, './fixtures/boilerplate-2'),
-        targetPath
+        targetPath,
       });
       await localGenerator.run({
         name: 'my demo',
-        description: 'hello'
+        description: 'hello',
       });
       assert(fse.existsSync(join(targetPath, 'package.json')));
       assert(fse.existsSync(join(targetPath, 'src/index.ts')));
 
-      const contents = fse.readFileSync(join(targetPath, 'src/index.ts'), 'utf-8');
+      const contents = fse.readFileSync(
+        join(targetPath, 'src/index.ts'),
+        'utf-8'
+      );
       assert(/hello/.test(contents));
     });
 
@@ -145,14 +149,22 @@ describe('/test/generator.test.ts', () => {
 
   describe('npm generator', () => {
     it('should generate template by npm pkg', async () => {
-      await fse.remove(join(tmpdir(), 'gen_' + Date.now().toString().slice(0, 5)));
+      await fse.remove(
+        join(
+          tmpdir(),
+          'gen_' +
+            Date.now()
+              .toString()
+              .slice(0, 5)
+        )
+      );
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: 'egg-boilerplate-simple',
-        targetPath
+        targetPath,
       });
       await npmGenerator.run({
         name: 'my demo',
-        description: 'hello'
+        description: 'hello',
       });
       assert(fse.existsSync(join(targetPath, 'package.json')));
       assert(fse.existsSync(join(targetPath, '.autod.conf')));
@@ -162,7 +174,7 @@ describe('/test/generator.test.ts', () => {
       // if change template and just use cache
       const templateRoot = npmGenerator.getTemplatePath();
       await fse.writeJSON(join(templateRoot, 'index.js'), {
-        desc: 'hello world'
+        desc: 'hello world',
       });
       // 第二次执行使用缓存
       await npmGenerator.run();
@@ -173,7 +185,7 @@ describe('/test/generator.test.ts', () => {
     it('should get parameterList from npm package', async () => {
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: 'egg-boilerplate-simple',
-        targetPath
+        targetPath,
       });
 
       const args = await npmGenerator.getParameterList();
