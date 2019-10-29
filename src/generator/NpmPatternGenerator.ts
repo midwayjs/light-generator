@@ -15,10 +15,14 @@ export class NpmPatternGenerator extends CommonGenerator {
   npmClient: string;
   tmpPath: string;
   pkgRootName: string;
+  registryUrl: string;
 
   constructor(options: NpmGeneratorOptions) {
     super(options);
     this.npmClient = options.npmClient;
+    this.registryUrl = options.registryUrl
+      ? '--registry=' + options.registryUrl
+      : '';
     this.tmpPath = join(
       tmpdir(),
       'gen_' +
@@ -31,7 +35,7 @@ export class NpmPatternGenerator extends CommonGenerator {
 
   private async getPackage() {
     const data = execSync(
-      `${this.npmClient} view ${this.templateUri} dist-tags --json`,
+      `${this.npmClient} view ${this.templateUri} dist-tags --json ${this.registryUrl}`,
       {
         cwd: process.env.HOME,
       }
@@ -46,7 +50,7 @@ export class NpmPatternGenerator extends CommonGenerator {
       if (dirExistsSync(this.pkgRootName)) {
         await fse.remove(this.pkgRootName);
       }
-      const cmd = `${this.npmClient} pack ${this.templateUri}@${remoteVersion} | mkdir ${this.pkgRootName}`;
+      const cmd = `${this.npmClient} pack ${this.templateUri}@${remoteVersion} ${this.registryUrl}| mkdir ${this.pkgRootName}`;
       execSync(cmd, {
         cwd: this.tmpPath,
         stdio: ['pipe', 'ignore', 'pipe'],
