@@ -182,6 +182,41 @@ describe('/test/generator.test.ts', () => {
       assert(/hello world/.test(contents));
     });
 
+    it('should generate template by custom registry', async () => {
+      await fse.remove(
+        join(
+          tmpdir(),
+          'gen_' +
+            Date.now()
+              .toString()
+              .slice(0, 5)
+        )
+      );
+      const npmGenerator = new LightGenerator().defineNpmPackage({
+        npmPackage: 'egg-boilerplate-simple',
+        targetPath,
+        registryUrl: 'https://registry.npmjs.org',
+      });
+      await npmGenerator.run({
+        name: 'my demo',
+        description: 'hello',
+      });
+      assert(fse.existsSync(join(targetPath, 'package.json')));
+      assert(fse.existsSync(join(targetPath, '.autod.conf')));
+
+      await fse.remove(targetPath);
+
+      // if change template and just use cache
+      const templateRoot = npmGenerator.getTemplatePath();
+      await fse.writeJSON(join(templateRoot, 'index.js'), {
+        desc: 'hello world',
+      });
+      // 第二次执行使用缓存
+      await npmGenerator.run();
+      const contents = fse.readFileSync(join(targetPath, 'index.js'), 'utf-8');
+      assert(/hello world/.test(contents));
+    });
+
     it('should get parameterList from npm package', async () => {
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: 'egg-boilerplate-simple',
