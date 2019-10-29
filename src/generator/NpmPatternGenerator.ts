@@ -12,7 +12,6 @@ export function renamePackageName(pkgName) {
 }
 
 export class NpmPatternGenerator extends CommonGenerator {
-
   npmClient: string;
   tmpPath: string;
   pkgRootName: string;
@@ -20,27 +19,42 @@ export class NpmPatternGenerator extends CommonGenerator {
   constructor(options: NpmGeneratorOptions) {
     super(options);
     this.npmClient = options.npmClient;
-    this.tmpPath = join(tmpdir(), 'gen_' + Date.now().toString().slice(0, 5));
+    this.tmpPath = join(
+      tmpdir(),
+      'gen_' +
+        Date.now()
+          .toString()
+          .slice(0, 5)
+    );
     fse.ensureDirSync(this.tmpPath);
   }
 
   private async getPackage() {
-    const data = execSync(`${this.npmClient} view ${this.templateUri} dist-tags --json`, {
-      cwd: process.env.HOME
-    }).toString();
-    const remoteVersion = JSON.parse(data)[ 'latest' ];
-    this.pkgRootName = `${renamePackageName(this.templateUri)}-${remoteVersion}`;
+    const data = execSync(
+      `${this.npmClient} view ${this.templateUri} dist-tags --json`,
+      {
+        cwd: process.env.HOME,
+      }
+    ).toString();
+    const remoteVersion = JSON.parse(data)['latest'];
+    this.pkgRootName = `${renamePackageName(
+      this.templateUri
+    )}-${remoteVersion}`;
     const currentPkgRoot = this.getTemplatePath();
     if (!dirExistsSync(currentPkgRoot)) {
+      // clean template directory first
+      if (dirExistsSync(this.pkgRootName)) {
+        await fse.remove(this.pkgRootName);
+      }
       const cmd = `${this.npmClient} pack ${this.templateUri}@${remoteVersion} | mkdir ${this.pkgRootName}`;
       execSync(cmd, {
         cwd: this.tmpPath,
-        stdio: [ 'pipe', 'ignore', 'pipe' ]
+        stdio: ['pipe', 'ignore', 'pipe'],
       });
 
       await tar.x({
         file: join(this.tmpPath, `${this.pkgRootName}.tgz`),
-        C: join(this.tmpPath, this.pkgRootName)
+        C: join(this.tmpPath, this.pkgRootName),
       });
 
       if (!dirExistsSync(currentPkgRoot)) {
@@ -57,5 +71,4 @@ export class NpmPatternGenerator extends CommonGenerator {
   getTemplatePath() {
     return join(this.tmpPath, this.pkgRootName, 'package');
   }
-
 }
