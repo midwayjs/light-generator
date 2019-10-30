@@ -1,4 +1,12 @@
 
+1.4.0 / 2019-10-30
+==================
+
+  * chore: add clean cache method
+  * chore: update remote registry
+  * chore: add test
+  * feat: support npm custom registry
+
 1.3.3 / 2019-10-29
 ==================
 
