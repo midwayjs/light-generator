@@ -1,9 +1,15 @@
 import { LightGenerator } from '../src';
 import { join } from 'path';
-import * as fse from 'fs-extra';
+import {
+  remove,
+  existsSync,
+  readFileSync,
+  ensureDirSync,
+  writeFileSync,
+  writeJSON,
+} from 'fs-extra';
 import assert from 'assert';
-import { tmpdir } from 'os';
-import { renamePackageName } from '../src/generator/NpmPatternGenerator';
+import { getTmpDir } from '../src/util/';
 
 async function assertThrowsAsync(fn, regExp) {
   let f = () => {};
@@ -21,13 +27,9 @@ async function assertThrowsAsync(fn, regExp) {
 describe('/test/generator.test.ts', () => {
   const targetPath = join(__dirname, './tmp');
 
-  beforeEach(async () => {
-    await fse.remove(targetPath);
-  });
+  beforeEach(() => remove(targetPath));
 
-  afterEach(async () => {
-    await fse.remove(targetPath);
-  });
+  afterEach(() => remove(targetPath));
 
   describe('local generator', () => {
     it('should generate template with no index', async () => {
@@ -36,8 +38,8 @@ describe('/test/generator.test.ts', () => {
         targetPath,
       });
       await localGenerator.run();
-      assert(fse.existsSync(join(targetPath, 'package.json')));
-      assert(fse.existsSync(join(targetPath, 'README.md')));
+      assert(existsSync(join(targetPath, 'package.json')));
+      assert(existsSync(join(targetPath, 'README.md')));
     });
 
     it('should generate template with index', async () => {
@@ -50,23 +52,23 @@ describe('/test/generator.test.ts', () => {
         description: 'hello',
         service: 'myService',
       });
-      assert(fse.existsSync(join(targetPath, 'test.js')));
-      assert(fse.existsSync(join(targetPath, 'package.json')));
-      assert(fse.existsSync(join(targetPath, 'src/index.ts')));
-      assert(fse.existsSync(join(targetPath, 'myService.js')));
-      assert(fse.existsSync(join(targetPath, 'myService_1.js')));
+      assert(existsSync(join(targetPath, 'test.js')));
+      assert(existsSync(join(targetPath, 'package.json')));
+      assert(existsSync(join(targetPath, 'src/index.ts')));
+      assert(existsSync(join(targetPath, 'myService.js')));
+      assert(existsSync(join(targetPath, 'myService_1.js')));
 
-      let contents = fse.readFileSync(join(targetPath, 'test.js'), 'utf-8');
+      let contents = readFileSync(join(targetPath, 'test.js'), 'utf-8');
       assert(/my demo/.test(contents));
 
-      contents = fse.readFileSync(join(targetPath, 'README.md'), 'utf-8');
+      contents = readFileSync(join(targetPath, 'README.md'), 'utf-8');
       assert(/my demo/.test(contents));
       assert(/hello/.test(contents));
 
-      contents = fse.readFileSync(join(targetPath, 'myService.js'), 'utf-8');
+      contents = readFileSync(join(targetPath, 'myService.js'), 'utf-8');
       assert(/myService/.test(contents));
 
-      contents = fse.readFileSync(join(targetPath, 'myService_1.js'), 'utf-8');
+      contents = readFileSync(join(targetPath, 'myService_1.js'), 'utf-8');
       assert(/myService/.test(contents));
     });
 
@@ -80,19 +82,19 @@ describe('/test/generator.test.ts', () => {
         description: 'hello',
         service: 'myService',
       });
-      assert(fse.existsSync(join(targetPath, 'test.js')));
-      assert(fse.existsSync(join(targetPath, 'test_22.js')));
-      assert(fse.existsSync(join(targetPath, 'package.json')));
-      assert(fse.existsSync(join(targetPath, 'package_22.json')));
-      assert(fse.existsSync(join(targetPath, 'src/index.ts')));
-      assert(fse.existsSync(join(targetPath, 'src/index_22.ts')));
-      assert(fse.existsSync(join(targetPath, 'myService.js')));
-      assert(fse.existsSync(join(targetPath, 'myService_22.js')));
-      assert(fse.existsSync(join(targetPath, 'myService_1.js')));
-      assert(fse.existsSync(join(targetPath, 'myService_1_22.js')));
+      assert(existsSync(join(targetPath, 'test.js')));
+      assert(existsSync(join(targetPath, 'test_22.js')));
+      assert(existsSync(join(targetPath, 'package.json')));
+      assert(existsSync(join(targetPath, 'package_22.json')));
+      assert(existsSync(join(targetPath, 'src/index.ts')));
+      assert(existsSync(join(targetPath, 'src/index_22.ts')));
+      assert(existsSync(join(targetPath, 'myService.js')));
+      assert(existsSync(join(targetPath, 'myService_22.js')));
+      assert(existsSync(join(targetPath, 'myService_1.js')));
+      assert(existsSync(join(targetPath, 'myService_1_22.js')));
 
       // test after
-      assert(fse.existsSync(join(targetPath, 'tttt.js')));
+      assert(existsSync(join(targetPath, 'tttt.js')));
     });
 
     it('should generate template with custom root', async () => {
@@ -104,20 +106,17 @@ describe('/test/generator.test.ts', () => {
         name: 'my demo',
         description: 'hello',
       });
-      assert(fse.existsSync(join(targetPath, 'package.json')));
-      assert(fse.existsSync(join(targetPath, 'src/index.ts')));
+      assert(existsSync(join(targetPath, 'package.json')));
+      assert(existsSync(join(targetPath, 'src/index.ts')));
 
-      const contents = fse.readFileSync(
-        join(targetPath, 'src/index.ts'),
-        'utf-8'
-      );
+      const contents = readFileSync(join(targetPath, 'src/index.ts'), 'utf-8');
       assert(/hello/.test(contents));
     });
 
     it('should generate template in not empty dir', async () => {
       const newTargetPath = join(__dirname, './tmp_new');
-      fse.ensureDirSync(newTargetPath);
-      fse.writeFileSync(join(newTargetPath, 'a.js'), 'hello');
+      ensureDirSync(newTargetPath);
+      writeFileSync(join(newTargetPath, 'a.js'), 'hello');
 
       const localGenerator = new LightGenerator().defineLocalPath({
         templatePath: join(__dirname, './fixtures/boilerplate-0'),
@@ -128,12 +127,12 @@ describe('/test/generator.test.ts', () => {
         await localGenerator.run();
       }, /A folder named/);
 
-      fse.removeSync(newTargetPath);
+      await remove(newTargetPath);
     });
 
     it('should generate template in empty dir', async () => {
       const newTargetPath = join(__dirname, './tmp_new');
-      fse.ensureDirSync(newTargetPath);
+      ensureDirSync(newTargetPath);
 
       const localGenerator = new LightGenerator().defineLocalPath({
         templatePath: join(__dirname, './fixtures/boilerplate-0'),
@@ -141,23 +140,15 @@ describe('/test/generator.test.ts', () => {
       });
 
       await localGenerator.run();
-      assert(fse.existsSync(join(newTargetPath, 'package.json')));
-      assert(fse.existsSync(join(newTargetPath, 'README.md')));
-      fse.removeSync(newTargetPath);
+      assert(existsSync(join(newTargetPath, 'package.json')));
+      assert(existsSync(join(newTargetPath, 'README.md')));
+      await remove(newTargetPath);
     });
   });
 
   describe('npm generator', () => {
     it('should generate template by npm pkg', async () => {
-      await fse.remove(
-        join(
-          tmpdir(),
-          'gen_' +
-            Date.now()
-              .toString()
-              .slice(0, 5)
-        )
-      );
+      await LightGenerator.cleanCache();
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: 'egg-boilerplate-simple',
         targetPath,
@@ -166,32 +157,24 @@ describe('/test/generator.test.ts', () => {
         name: 'my demo',
         description: 'hello',
       });
-      assert(fse.existsSync(join(targetPath, 'package.json')));
-      assert(fse.existsSync(join(targetPath, '.autod.conf')));
+      assert(existsSync(join(targetPath, 'package.json')));
+      assert(existsSync(join(targetPath, '.autod.conf')));
 
-      await fse.remove(targetPath);
+      await remove(targetPath);
 
       // if change template and just use cache
       const templateRoot = npmGenerator.getTemplatePath();
-      await fse.writeJSON(join(templateRoot, 'index.js'), {
+      await writeJSON(join(templateRoot, 'index.js'), {
         desc: 'hello world',
       });
       // 第二次执行使用缓存
       await npmGenerator.run();
-      const contents = fse.readFileSync(join(targetPath, 'index.js'), 'utf-8');
+      const contents = readFileSync(join(targetPath, 'index.js'), 'utf-8');
       assert(/hello world/.test(contents));
     });
 
     it('should generate template by custom registry', async () => {
-      await fse.remove(
-        join(
-          tmpdir(),
-          'gen_' +
-            Date.now()
-              .toString()
-              .slice(0, 5)
-        )
-      );
+      await LightGenerator.cleanCache();
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: 'egg-boilerplate-simple',
         targetPath,
@@ -201,23 +184,24 @@ describe('/test/generator.test.ts', () => {
         name: 'my demo',
         description: 'hello',
       });
-      assert(fse.existsSync(join(targetPath, 'package.json')));
-      assert(fse.existsSync(join(targetPath, '.autod.conf')));
+      assert(existsSync(join(targetPath, 'package.json')));
+      assert(existsSync(join(targetPath, '.autod.conf')));
 
-      await fse.remove(targetPath);
+      await remove(targetPath);
 
       // if change template and just use cache
       const templateRoot = npmGenerator.getTemplatePath();
-      await fse.writeJSON(join(templateRoot, 'index.js'), {
+      await writeJSON(join(templateRoot, 'index.js'), {
         desc: 'hello world',
       });
       // 第二次执行使用缓存
       await npmGenerator.run();
-      const contents = fse.readFileSync(join(targetPath, 'index.js'), 'utf-8');
+      const contents = readFileSync(join(targetPath, 'index.js'), 'utf-8');
       assert(/hello world/.test(contents));
     });
 
-    it('should get parameterList from npm package', async () => {
+    it('should get parameterList from npm package and clean cache', async () => {
+      await LightGenerator.cleanCache();
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: 'egg-boilerplate-simple',
         targetPath,
@@ -225,12 +209,9 @@ describe('/test/generator.test.ts', () => {
 
       const args = await npmGenerator.getParameterList();
       assert(args);
-    });
 
-    it('should transform package name', () => {
-      assert(renamePackageName('@ali/midway') === 'ali-midway');
-      assert(renamePackageName('@ali.midway') === '@ali.midway');
-      assert(renamePackageName('@scope/midway') === 'scope-midway');
+      await LightGenerator.cleanCache();
+      assert(!existsSync(getTmpDir()));
     });
   });
 });

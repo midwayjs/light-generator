@@ -2,14 +2,10 @@ import { CommonGenerator } from './CommonGenerator';
 import { NpmGeneratorOptions } from '../interface';
 import { execSync } from 'child_process';
 import { join } from 'path';
-import { tmpdir } from 'os';
 import * as fse from 'fs-extra';
 import { dirExistsSync } from '../util/fs';
 import * as tar from 'tar';
-
-export function renamePackageName(pkgName) {
-  return pkgName.replace(/^@(\w+)\//, '$1-');
-}
+import { getTmpDir, renamePackageName } from '../util/';
 
 export class NpmPatternGenerator extends CommonGenerator {
   npmClient: string;
@@ -23,13 +19,7 @@ export class NpmPatternGenerator extends CommonGenerator {
     this.registryUrl = options.registryUrl
       ? '--registry=' + options.registryUrl
       : '';
-    this.tmpPath = join(
-      tmpdir(),
-      'gen_' +
-        Date.now()
-          .toString()
-          .slice(0, 5)
-    );
+    this.tmpPath = getTmpDir();
     fse.ensureDirSync(this.tmpPath);
   }
 
