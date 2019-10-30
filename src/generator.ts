@@ -4,6 +4,9 @@ import { NpmPatternGenerator } from './generator/NpmPatternGenerator';
 import { UrlPatternGenerator } from './generator/UrlPatternGenerator';
 import { LocalPatternGenerator } from './generator/LocalPatternGenerator';
 import { ignoreRule, replaceRule } from './rule';
+import { getTmpDir } from './util/';
+import { dirExistsSync } from './util/fs';
+import { remove } from 'fs-extra';
 
 export class LightGenerator {
   options;
@@ -66,5 +69,12 @@ export class LightGenerator {
       npmClient: options.npmClient || 'npm',
       registryUrl: options.registryUrl,
     });
+  }
+
+  static async cleanCache() {
+    const tmpDir = getTmpDir();
+    if (dirExistsSync(tmpDir)) {
+      await remove(tmpDir);
+    }
   }
 }

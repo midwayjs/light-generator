@@ -36,7 +36,7 @@ await generator.run({
 - options {object}
     - disableDefaultRule {boolean} 可选，默认 false，用于禁止默认规则;
     - copyRule { CopyRule[] } 可选，可以通过这个配置，传递自定义拷贝规则
-    
+
 ### API
 
 `LightGenerator` 通过定义一系列格式，返回一个特定格式的生成器，执行该生成器即可拿到相应的结果。
@@ -89,6 +89,16 @@ const npmGenerator = new LightGenerator().defineNpmPackage({
   npmPackage: 'egg-boilerplate-simple',
   targetPath
 });
+```
+
+#### clean cache
+
+由于本模块会下载 npm 包到本地特定的临时目录，可以通过暴露的方法清理该目录。
+
+注意，此方法为静态方法。
+
+```ts
+await LightGenerator.cleanCache();
 ```
 
 
@@ -176,7 +186,7 @@ const generator = new LightGenerator({
 - root { string } 设置模板根路径，相对于包根路径，如果配置了 `boilerplateConfig` 字段，默认为 `boilerplate` 目录
 - replaceParameter { string } 用户可替换参数文件路径，相对于包根路径，默认为 `index.js`
 - replaceFile { string []} 需要替换的文件列表，默认为 `README.md`，相对于 root，请一定填写规则修改前的文件名，支持 [minimatch](https://github.com/isaacs/minimatch) 格式的通配符
-- rule { string []} 只对本模板生效自定义 copy 规则，内容为可以 require 的地址，内容格式为 `module.exports = async () => {}` 
+- rule { string []} 只对本模板生效自定义 copy 规则，内容为可以 require 的地址，内容格式为 `module.exports = async () => {}`
 - afterAll { string } 所有拷贝都完成之后会执行代码地址，内容为可以 require 的地址，参数为 options
   - options
       - sourceRoot 模板源根路径，比如本地下载的地址
@@ -184,6 +194,7 @@ const generator = new LightGenerator({
       - targetRoot 目标路径，实际拷贝到的地址
       - replaceParameter 用户替换的参数
       - templateConfig pkg 中定义的 `boilerplateConfig` 配置内容
+
 
 ## 其他
 
