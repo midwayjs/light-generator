@@ -118,7 +118,7 @@ const customRule = async (currentFilePath) => {
 }
 
 const generator = new LightGenerator({
-  copyRule: [customRule]
+  rules: [customRule]
 });
 ```
 
@@ -134,7 +134,7 @@ const generator = new LightGenerator({
 ```ts
 import {LightGenerator, ignoreRule} from 'light-generator';
 const generator = new LightGenerator({
-  copyRule: [ignoreRule]
+  rules: [ignoreRule]
 });
 ```
 
@@ -146,7 +146,7 @@ const generator = new LightGenerator({
 import {LightGenerator, ignoreRule} from 'light-generator';
 const generator = new LightGenerator({
   disableDefaultRule: true,
-  copyRule: [ignoreRule]
+  rules: [ignoreRule]
 });
 ```
 
