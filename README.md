@@ -35,7 +35,7 @@ await generator.run({
 
 - options {object}
     - disableDefaultRule {boolean} 可选，默认 false，用于禁止默认规则;
-    - copyRule { CopyRule[] } 可选，可以通过这个配置，传递自定义拷贝规则
+    - rules { CopyRule[] } 可选，可以通过这个配置，传递自定义拷贝规则
 
 ### API
 
