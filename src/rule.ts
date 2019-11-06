@@ -3,6 +3,7 @@ import { CopyRuleOptions } from './interface';
 import { join, relative } from 'path';
 import minimatch from 'minimatch';
 const debug = require('debug')('generator');
+const path = require('path');
 
 /**
  * 移除文件下划线
@@ -12,11 +13,8 @@ export const ignoreRule = async (
   currentFilePath,
   copyRuleOptions: CopyRuleOptions
 ) => {
-  // add RegExp for client/_aaa.json case
-  if (
-    /^_/.test(copyRuleOptions.targetRelativeFile) ||
-    /^(.*)\/_/.test(copyRuleOptions.targetRelativeFile)
-  ) {
+  const basename = path.basename(copyRuleOptions.targetRelativeFile);
+  if (/^_/.test(basename)) {
     if (copyRuleOptions.filenameMapping.has(currentFilePath)) {
       // 如果名字被修改过，拿新的名字去替换
       const newFilePath = copyRuleOptions.filenameMapping.get(currentFilePath);
