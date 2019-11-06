@@ -1,4 +1,13 @@
 
+1.4.1 / 2019-11-06
+==================
+
+  * 修复ignoreRule问题
+  * 修复ignoreRule问题
+  * ignoreRule 正则匹配增加额外规则 适配client/_aaa.json case
+  * doc: fix constructor args
+  * doc: fix constructor args
+
 1.4.0 / 2019-10-30
 ==================
 
