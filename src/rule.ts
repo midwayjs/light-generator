@@ -1,9 +1,8 @@
 import * as fse from 'fs-extra';
 import { CopyRuleOptions } from './interface';
-import { join, relative } from 'path';
+import { join, relative, basename } from 'path';
 import minimatch from 'minimatch';
 const debug = require('debug')('generator');
-const path = require('path');
 
 /**
  * 移除文件下划线
@@ -13,8 +12,8 @@ export const ignoreRule = async (
   currentFilePath,
   copyRuleOptions: CopyRuleOptions
 ) => {
-  const basename = path.basename(copyRuleOptions.targetRelativeFile);
-  if (/^_/.test(basename)) {
+  const filename = basename(copyRuleOptions.targetRelativeFile);
+  if (/^_/.test(filename)) {
     if (copyRuleOptions.filenameMapping.has(currentFilePath)) {
       // 如果名字被修改过，拿新的名字去替换
       const newFilePath = copyRuleOptions.filenameMapping.get(currentFilePath);
