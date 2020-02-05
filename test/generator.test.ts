@@ -93,6 +93,8 @@ describe('/test/generator.test.ts', () => {
       assert(existsSync(join(targetPath, 'myService_1.js')));
       assert(existsSync(join(targetPath, 'myService_1_22.js')));
 
+      // test before
+      assert(existsSync(join(targetPath, 'aaaa.js')));
       // test after
       assert(existsSync(join(targetPath, 'tttt.js')));
     });

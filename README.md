@@ -187,15 +187,19 @@ const generator = new LightGenerator({
 - replaceParameter { string } 用户可替换参数文件路径，相对于包根路径，默认为 `index.js`
 - replaceFile { string []} 需要替换的文件列表，默认为 `README.md`，相对于 root，请一定填写规则修改前的文件名，支持 [minimatch](https://github.com/isaacs/minimatch) 格式的通配符
 - rule { string []} 只对本模板生效自定义 copy 规则，内容为可以 require 的地址，内容格式为 `module.exports = async () => {}`
-- afterAll { string } 所有拷贝都完成之后会执行代码地址，内容为可以 require 的地址，参数为 options
+- beforeAll { string } 模板创建执行之前会执行的代码地址，内容为可以 require 的地址，如果内容为方法，则参数为 options
   - options
       - sourceRoot 模板源根路径，比如本地下载的地址
       - templateRoot 模板源路径，比如下载到本地的模板里面的 boilerplate 目录
       - targetRoot 目标路径，实际拷贝到的地址
       - replaceParameter 用户替换的参数
       - templateConfig pkg 中定义的 `boilerplateConfig` 配置内容
-
+- afterAll { string } 所有拷贝都完成之后会执行代码地址，内容为可以 require 的地址，如果内容为方法，则参数为 options，同 beforeAll
 
 ## 其他
 
 此模块部分核心代码从 serverless 模块中抽取。
+
+## 协议
+
+[MIT](LICENSE)
