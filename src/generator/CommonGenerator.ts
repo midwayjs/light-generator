@@ -5,6 +5,7 @@ import {
 } from '../interface';
 import { isAbsolute, join } from 'path';
 import { dirExistsSync, fileExistsSync, readFileSync } from '../util/fs';
+import { ensureDir } from 'fs-extra';
 import untildify from 'untildify';
 import emptyDir from 'empty-dir';
 
@@ -94,6 +95,9 @@ export abstract class CommonGenerator {
         const errorMessage = `A folder named "${servicePath}" already exists.`;
         throw new Error(errorMessage);
       }
+    } else {
+      // create
+      await ensureDir(servicePath);
     }
 
     let templateConfig = (await this.getTemplateConfig()) as Partial<
@@ -147,11 +151,11 @@ export abstract class CommonGenerator {
   }
 
   async runScript(packageRoot: string, runString: string, runArgs: object) {
-    const runScript = isAbsolute(runString)
+    const fn = isAbsolute(runString)
       ? require(runString)
       : require(join(packageRoot, runString));
-    if (runScript && typeof runScript === 'function') {
-      await runScript(runArgs);
+    if (fn && typeof fn === 'function') {
+      await fn(runArgs);
     }
   }
 
