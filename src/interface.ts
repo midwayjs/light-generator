@@ -25,6 +25,7 @@ export interface TemplatePackageConfig {
   replaceFile: string[];
   replaceParameter: string | object;
   rule: string[];
+  beforeAll: string;
   afterAll: string;
 }
 

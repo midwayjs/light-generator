@@ -116,27 +116,42 @@ export abstract class CommonGenerator {
     }
 
     const defaultArgsValue = await this.getDefaultParameterValue();
+    replaceParameter = Object.assign(defaultArgsValue, replaceParameter);
+
+    if (templateConfig.beforeAll) {
+      await this.runScript(packageRoot, templateConfig.beforeAll, {
+        sourceRoot: packageRoot,
+        templateRoot,
+        targetRoot: servicePath,
+        replaceParameter,
+        templateConfig,
+      });
+    }
 
     await this.copyWalker.copy(templateRoot, servicePath, {
       packageRoot,
-      replaceParameter: Object.assign(defaultArgsValue, replaceParameter),
+      replaceParameter,
       templateConfig,
       noLinks: true,
     });
 
     if (templateConfig.afterAll) {
-      const afterScript = isAbsolute(templateConfig.afterAll)
-        ? require(templateConfig.afterAll)
-        : require(join(packageRoot, templateConfig.afterAll));
-      if (afterScript && typeof afterScript === 'function') {
-        await afterScript({
-          sourceRoot: packageRoot,
-          templateRoot,
-          targetRoot: servicePath,
-          replaceParameter: Object.assign(defaultArgsValue, replaceParameter),
-          templateConfig,
-        });
-      }
+      await this.runScript(packageRoot, templateConfig.afterAll, {
+        sourceRoot: packageRoot,
+        templateRoot,
+        targetRoot: servicePath,
+        replaceParameter,
+        templateConfig,
+      });
+    }
+  }
+
+  async runScript(packageRoot: string, runString: string, runArgs: object) {
+    const runScript = isAbsolute(runString)
+      ? require(runString)
+      : require(join(packageRoot, runString));
+    if (runScript && typeof runScript === 'function') {
+      await runScript(runArgs);
     }
   }
 
