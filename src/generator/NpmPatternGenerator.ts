@@ -37,8 +37,8 @@ export class NpmPatternGenerator extends CommonGenerator {
     const currentPkgRoot = this.getTemplatePath();
     if (!dirExistsSync(currentPkgRoot)) {
       // clean template directory first
-      if (dirExistsSync(this.pkgRootName)) {
-        await fse.remove(this.pkgRootName);
+      if (dirExistsSync(join(this.tmpPath, this.pkgRootName))) {
+        await fse.remove(join(this.tmpPath, this.pkgRootName));
       }
       const cmd = `${this.npmClient} pack ${this.templateUri}@${remoteVersion} ${this.registryUrl}| mkdir ${this.pkgRootName}`;
       execSync(cmd, {
