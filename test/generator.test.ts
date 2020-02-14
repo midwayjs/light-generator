@@ -215,5 +215,21 @@ describe('/test/generator.test.ts', () => {
       await LightGenerator.cleanCache();
       assert(!existsSync(getTmpDir()));
     });
+
+    it('shoud gererate directory from npm boilerplate use before and after', async () => {
+      await LightGenerator.cleanCache();
+      const npmGenerator = new LightGenerator().defineNpmPackage({
+        npmPackage: '@midwayjs/generator-test-boilerplate',
+        targetPath,
+      });
+
+      await npmGenerator.run();
+      await LightGenerator.cleanCache();
+      assert(!existsSync(getTmpDir()));
+      assert(existsSync(join(targetPath, 'src/apis/index.ts')));
+      assert(existsSync(join(targetPath, 'f.yml')));
+      assert(existsSync(join(targetPath, 'build.json')));
+      assert(existsSync(join(targetPath, 'src/pages')));
+    });
   });
 });
