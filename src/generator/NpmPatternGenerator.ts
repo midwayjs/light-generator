@@ -83,4 +83,5 @@ export class NpmPatternGenerator extends CommonGenerator {
   getTemplatePath() {
     return join(this.tmpPath, this.pkgRootName, 'package');
   }
+
 }

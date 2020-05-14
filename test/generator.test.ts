@@ -175,6 +175,19 @@ describe('/test/generator.test.ts', () => {
       assert(/hello world/.test(contents));
     });
 
+    it('should generate template by special npm pkg', async () => {
+      await LightGenerator.cleanCache();
+      const npmGenerator = new LightGenerator().defineNpmPackage({
+        npmPackage: '@midwayjs-examples/faas-with-vue',
+        targetPath,
+      });
+      await npmGenerator.run();
+      assert(existsSync(join(targetPath, 'package.json')));
+      assert(existsSync(join(targetPath, 'src')));
+      assert(existsSync(join(targetPath, '.gitignore')));
+      assert(existsSync(join(targetPath, 'f.yml')));
+    });
+
     it('should generate template by custom registry', async () => {
       await LightGenerator.cleanCache();
       const npmGenerator = new LightGenerator().defineNpmPackage({
