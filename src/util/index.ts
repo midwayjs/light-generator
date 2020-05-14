@@ -12,5 +12,5 @@ export function getTmpDir() {
 }
 
 export function renamePackageName(pkgName) {
-  return pkgName.replace(/^@(\w+)\//, '$1-');
+  return pkgName.replace(/^@/, '').replace(/\//g, '-');
 }
