@@ -27,9 +27,17 @@ async function assertThrowsAsync(fn, regExp) {
 describe('/test/generator.test.ts', () => {
   const targetPath = join(__dirname, './tmp');
 
-  beforeEach(() => remove(targetPath));
+  beforeEach(async () => {
+    if (existsSync(targetPath)) {
+      await remove(targetPath);
+    }
+  });
 
-  afterEach(() => remove(targetPath));
+  afterEach(async () => {
+    if (existsSync(targetPath)) {
+      await remove(targetPath);
+    }
+  });
 
   describe('local generator', () => {
     it('should generate template with no index', async () => {
