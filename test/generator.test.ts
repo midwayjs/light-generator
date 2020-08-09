@@ -219,7 +219,7 @@ describe('/test/generator.test.ts', () => {
       assert(/hello world/.test(contents));
     });
 
-    it.only('should get parameterList from npm package and clean cache', async () => {
+    it('should get parameterList from npm package and clean cache', async () => {
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: 'egg-boilerplate-simple',
         targetPath,
