@@ -219,7 +219,7 @@ describe('/test/generator.test.ts', () => {
       assert(/hello world/.test(contents));
     });
 
-    it('should get parameterList from npm package and clean cache', async () => {
+    it.only('should get parameterList from npm package and clean cache', async () => {
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: 'egg-boilerplate-simple',
         targetPath,
@@ -227,7 +227,7 @@ describe('/test/generator.test.ts', () => {
 
       const args = await npmGenerator.getParameterList();
       assert(args);
-
+      await LightGenerator.cleanCache();
       assert(!existsSync(getTmpDir()));
     });
 
@@ -239,7 +239,6 @@ describe('/test/generator.test.ts', () => {
 
       await npmGenerator.run();
 
-      assert(!existsSync(getTmpDir()));
       assert(existsSync(join(targetPath, 'src/apis/index.ts')));
       assert(existsSync(join(targetPath, 'f.yml')));
       assert(existsSync(join(targetPath, 'build.json')));
