@@ -3,7 +3,7 @@ import {
   CopyWalker,
   TemplatePackageConfig,
 } from '../interface';
-import { isAbsolute, join } from 'path';
+import { isAbsolute, join, normalize } from 'path';
 import { dirExistsSync, fileExistsSync, readFileSync } from '../util/fs';
 import { ensureDir } from 'fs-extra';
 import untildify from 'untildify';
@@ -40,6 +40,12 @@ export abstract class CommonGenerator {
             if (typeof config.replaceFile === 'string') {
               config.replaceFile = [config.replaceFile];
             }
+
+            // normalize path for windows
+            config.replaceFile = config.replaceFile.map((item) => {
+              return normalize(item);
+            });
+
             config.replaceParameter =
               (config.replaceParameter as string) || 'index.js';
             config.root = join(templateRoot, config.root || 'boilerplate');

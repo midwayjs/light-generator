@@ -7,6 +7,7 @@ import {
   ensureDirSync,
   writeFileSync,
   writeJSON,
+  emptyDir,
 } from 'fs-extra';
 import assert from 'assert';
 import { getTmpDir } from '../src/util/';
@@ -27,9 +28,15 @@ async function assertThrowsAsync(fn, regExp) {
 describe('/test/generator.test.ts', () => {
   const targetPath = join(__dirname, './tmp');
 
-  beforeEach(() => remove(targetPath));
+  beforeEach(async () => {
+    await emptyDir(targetPath);
+    await LightGenerator.cleanCache();
+  });
 
-  afterEach(() => remove(targetPath));
+  afterEach(async () => {
+    await emptyDir(targetPath);
+    await LightGenerator.cleanCache();
+  });
 
   describe('local generator', () => {
     it('should generate template with no index', async () => {
@@ -150,7 +157,6 @@ describe('/test/generator.test.ts', () => {
 
   describe('npm generator', () => {
     it('should generate template by npm pkg', async () => {
-      await LightGenerator.cleanCache();
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: 'egg-boilerplate-simple',
         targetPath,
@@ -176,7 +182,6 @@ describe('/test/generator.test.ts', () => {
     });
 
     it('should generate template by special npm pkg', async () => {
-      await LightGenerator.cleanCache();
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: '@midwayjs-examples/faas-with-vue',
         targetPath,
@@ -189,7 +194,6 @@ describe('/test/generator.test.ts', () => {
     });
 
     it('should generate template by custom registry', async () => {
-      await LightGenerator.cleanCache();
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: 'egg-boilerplate-simple',
         targetPath,
@@ -216,7 +220,6 @@ describe('/test/generator.test.ts', () => {
     });
 
     it('should get parameterList from npm package and clean cache', async () => {
-      await LightGenerator.cleanCache();
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: 'egg-boilerplate-simple',
         targetPath,
@@ -224,21 +227,18 @@ describe('/test/generator.test.ts', () => {
 
       const args = await npmGenerator.getParameterList();
       assert(args);
-
       await LightGenerator.cleanCache();
       assert(!existsSync(getTmpDir()));
     });
 
     it('shoud gererate directory from npm boilerplate use before and after', async () => {
-      await LightGenerator.cleanCache();
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: '@midwayjs/generator-test-boilerplate',
         targetPath,
       });
 
       await npmGenerator.run();
-      await LightGenerator.cleanCache();
-      assert(!existsSync(getTmpDir()));
+
       assert(existsSync(join(targetPath, 'src/apis/index.ts')));
       assert(existsSync(join(targetPath, 'f.yml')));
       assert(existsSync(join(targetPath, 'build.json')));
