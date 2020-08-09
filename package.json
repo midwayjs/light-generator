@@ -31,7 +31,7 @@
   "scripts": {
     "build": "npm run lint && midway-bin build -c",
     "lint": "./node_modules/.bin/tslint --format prose -c ./tslint.json src/**/*.ts test/**/*.ts",
-    "test": "npm run lint && NODE_ENV=test midway-bin test --ts --full-trace",
+    "test": "npm run lint && cross-env NODE_ENV=test midway-bin test --ts --full-trace",
     "cov": "cross-env NODE_ENV=unittest midway-bin cov --ts",
     "prepublishOnly": "npm run build"
   },
