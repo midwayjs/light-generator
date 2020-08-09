@@ -45,7 +45,7 @@ export class NpmPatternGenerator extends CommonGenerator {
       if (dirExistsSync(join(this.tmpPath, this.pkgRootName))) {
         await fse.remove(join(this.tmpPath, this.pkgRootName));
       }
-      const cmd = `${this.npmClient} pack ${this.templateUri}@${remoteVersion} ${this.registryUrl}| mkdir ${this.pkgRootName}`;
+      const cmd = `${this.npmClient} pack ${this.templateUri}@${remoteVersion} ${this.registryUrl}&& mkdir ${this.pkgRootName}`;
       this.debugLogger('download cmd = [%s]', cmd);
 
       // create spin
