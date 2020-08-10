@@ -1,6 +1,6 @@
 import { CommonGenerator } from './CommonGenerator';
 import { NpmGeneratorOptions } from '../interface';
-import { execSync } from 'child_process';
+import { exec, execSync } from 'child_process';
 import { join } from 'path';
 import * as fse from 'fs-extra';
 import { dirExistsSync } from '../util/fs';
@@ -47,20 +47,30 @@ export class NpmPatternGenerator extends CommonGenerator {
       }
       const cmd = `${this.npmClient} pack ${this.templateUri}@${remoteVersion} ${this.registryUrl}&& mkdir ${this.pkgRootName}`;
       this.debugLogger('download cmd = [%s]', cmd);
-
       // create spin
       const spin = new Spin({
         text: 'Downloading, please wait a moment',
       });
       spin.start();
-      // run download
-      execSync(cmd, {
-        cwd: this.tmpPath,
-        stdio: ['pipe', 'ignore', 'pipe'],
-      });
 
-      spin.text = 'Download Complete';
-      spin.stop();
+      await new Promise((resolve, reject) => {
+        // run download
+        exec(
+          cmd,
+          {
+            cwd: this.tmpPath,
+          },
+          (err, stdout) => {
+            if (err) {
+              reject(err);
+            } else {
+              spin.text = 'Download Complete';
+              spin.stop();
+              resolve();
+            }
+          }
+        );
+      });
 
       await tar.x({
         file: join(this.tmpPath, `${this.pkgRootName}.tgz`),
