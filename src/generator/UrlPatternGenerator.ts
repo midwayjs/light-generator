@@ -13,10 +13,11 @@ export class UrlPatternGenerator extends CommonGenerator {
     const message = [
       `Successfully installed "${serviceName}" `,
       `${this.templateName &&
-      this.templateName !== serviceName ? `as "${this.templateName}"` : ''}`,
+        this.templateName !== serviceName ? `as "${this.templateName}"` : ''}`,
     ].join('');
 
     console.log(message);
+    return { fileList: [] };
   }
 
   getTemplatePath(): string {

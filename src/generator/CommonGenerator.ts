@@ -138,7 +138,7 @@ export abstract class CommonGenerator {
       });
     }
 
-    await this.copyWalker.copy(templateRoot, servicePath, {
+    const fileList = await this.copyWalker.copy(templateRoot, servicePath, {
       packageRoot,
       replaceParameter,
       templateConfig,
@@ -154,6 +154,10 @@ export abstract class CommonGenerator {
         templateConfig,
       });
     }
+
+    return {
+      fileList
+    };
   }
 
   async runScript(packageRoot: string, runString: string, runArgs: object) {

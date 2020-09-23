@@ -1,6 +1,6 @@
 import { CommonGenerator } from './CommonGenerator';
 import { NpmGeneratorOptions } from '../interface';
-import { execSync } from 'child_process';
+import { exec, execSync } from 'child_process';
 import { join } from 'path';
 import * as fse from 'fs-extra';
 import { dirExistsSync } from '../util/fs';
@@ -54,18 +54,15 @@ export class NpmPatternGenerator extends CommonGenerator {
       });
       spin.start();
       // run download
-      execSync(cmd, {
-        cwd: this.tmpPath,
-        stdio: ['pipe', 'ignore', 'pipe'],
-      });
+      await this.execPromise(cmd, this.tmpPath);
 
-      spin.text = 'Download Complete';
-      spin.stop();
+      spin.text = 'Unzipping, please wait a moment';
 
       await tar.x({
         file: join(this.tmpPath, `${this.pkgRootName}.tgz`),
         C: join(this.tmpPath, this.pkgRootName),
       });
+      spin.stop();
 
       if (!dirExistsSync(currentPkgRoot)) {
         throw new Error(`${currentPkgRoot} package download error`);
@@ -74,16 +71,34 @@ export class NpmPatternGenerator extends CommonGenerator {
       if (fse.existsSync(join(currentPkgRoot, 'package.json'))) {
         const pkg = require(join(currentPkgRoot, 'package.json'));
         if (pkg['dependencies']) {
+          const spin = new Spin({
+            text: 'Installing template dependencies',
+          });
+          spin.start();
           this.debugLogger('find package.json and dependencies');
           const installCmd = `${this.npmClient} install --production`;
-          execSync(installCmd, {
-            cwd: currentPkgRoot,
-            stdio: ['pipe', 'ignore', 'pipe'],
-          });
+          await this.execPromise(installCmd, currentPkgRoot);
           this.debugLogger('install dependencies complete');
+          spin.stop();
         }
       }
     }
+  }
+
+  async execPromise(cmd, cwd) {
+    return new Promise((resolve, reject) => {
+      exec(
+        cmd,
+        { cwd },
+        (err, data) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(data);
+          }
+        }
+      );
+    });
   }
 
   async getTemplateConfig() {
