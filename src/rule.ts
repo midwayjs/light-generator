@@ -2,7 +2,7 @@ import * as fse from 'fs-extra';
 import { CopyRuleOptions } from './interface';
 import { join, relative, basename } from 'path';
 import minimatch from 'minimatch';
-const debug = require('debug')('generator');
+const debug = require('util').debuglog('generator');
 
 /**
  * 移除文件下划线
