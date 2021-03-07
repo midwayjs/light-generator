@@ -1,7 +1,6 @@
 import { DirectoryCopyWalker } from './util/copyDirContents';
 import { CopyRule, CopyWalker } from './interface';
 import { NpmPatternGenerator } from './generator/NpmPatternGenerator';
-import { UrlPatternGenerator } from './generator/UrlPatternGenerator';
 import { LocalPatternGenerator } from './generator/LocalPatternGenerator';
 import { ignoreRule, replaceRule } from './rule';
 import { getTmpDir } from './util/';
@@ -37,19 +36,6 @@ export class LightGenerator {
   }) {
     return new LocalPatternGenerator({
       templateUri: options.templatePath,
-      targetPath: options.targetPath,
-      templateName: options.templateName,
-      copyWalker: this.copyWalker,
-    });
-  }
-
-  defineRemoteUrl(options: {
-    templateUrl: string;
-    targetPath: string;
-    templateName: string;
-  }) {
-    return new UrlPatternGenerator({
-      templateUri: options.templateUrl,
       targetPath: options.targetPath,
       templateName: options.templateName,
       copyWalker: this.copyWalker,

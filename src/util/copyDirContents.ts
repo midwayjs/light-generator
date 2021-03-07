@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as fse from 'fs-extra';
 import { walkDirSync } from './walkDirSync';
 import { CopyRule, CopyWalker, TemplatePackageConfig } from '../interface';
-const debug = require('debug')('generator');
+const debug = require('util').debuglog('generator');
 
 export class DirectoryCopyWalker implements CopyWalker {
 
