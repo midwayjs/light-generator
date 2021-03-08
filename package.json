@@ -12,7 +12,7 @@
     "untildify": "^4.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^5.2.5",
+    "@types/jest": "^26",
     "@types/node": "^14",
     "cross-env": "^7.0.2",
     "@midwayjs/cli": "1",
