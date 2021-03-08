@@ -196,6 +196,43 @@ const generator = new LightGenerator({
       - templateConfig pkg 中定义的 `boilerplateConfig` 配置内容
 - afterAll { string } 所有拷贝都完成之后会执行代码地址，内容为可以 require 的地址，如果内容为方法，则参数为 options，同 beforeAll
 
+## 事件
+
+```js
+const generator = new LightGenerator().defineNpmPackage({
+  npmPackage: 'egg-boilerplate-simple',
+  targetPath
+});
+
+/**
+ * 模板下载完毕，准备创建
+ */
+generator.onTemplateReady(() => {
+  // log
+});
+
+/**
+ * 每个文件被拷贝时触发
+ */
+generator.onFileCreated((data: {
+  sourceFullFilePath: string;
+  targetFullFilePath: string;
+  destDir: string;
+  relativeFilePath: string;
+}) => {
+  // log
+});
+
+await generator.run({
+  name: 'demo'
+});
+```
+
+- sourceFullFilePath 源模板文件绝对路径
+- targetFullFilePath 要拷贝的目标绝对路径
+- destDir 要拷贝的目标目录
+- relativeFilePath 要拷贝的目标文件
+
 ## 其他
 
 此模块部分核心代码从 serverless 模块中抽取。
