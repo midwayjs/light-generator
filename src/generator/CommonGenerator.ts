@@ -177,12 +177,14 @@ export abstract class CommonGenerator {
     this.eventCenter.on(GeneratorEventEnum.onTemplateReady, handler);
   }
 
-  onFileCreated(handler: (data: {
-    sourceFullFilePath: string;
-    targetFullFilePath: string;
-    destDir: string;
-    relativeFilePath: string;
-  }) => void) {
+  onFileCreated(
+    handler: (data: {
+      sourceFullFilePath: string;
+      targetFullFilePath: string;
+      destDir: string;
+      relativeFilePath: string;
+    }) => void
+  ) {
     this.eventCenter.on(GeneratorEventEnum.onFileCreate, handler);
   }
 

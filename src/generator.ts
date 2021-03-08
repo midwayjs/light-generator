@@ -21,9 +21,11 @@ export class LightGenerator {
   ) {
     this.options = options;
     this.eventCenter = new EventEmitter();
-    this.copyWalker = new DirectoryCopyWalker(Object.assign(this.options, {
-      eventCenter: this.eventCenter,
-    }));
+    this.copyWalker = new DirectoryCopyWalker(
+      Object.assign(this.options, {
+        eventCenter: this.eventCenter,
+      })
+    );
     if (!this.options.disableDefaultRule) {
       this.addDefaultCopyRule();
     }

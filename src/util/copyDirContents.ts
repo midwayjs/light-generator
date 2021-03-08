@@ -1,7 +1,12 @@
 import * as path from 'path';
 import * as fse from 'fs-extra';
 import { walkDirSync } from './walkDirSync';
-import { CopyRule, CopyWalker, GeneratorEventEnum, TemplatePackageConfig } from '../interface';
+import {
+  CopyRule,
+  CopyWalker,
+  GeneratorEventEnum,
+  TemplatePackageConfig,
+} from '../interface';
 import EventEmitter from 'events';
 const debug = require('util').debuglog('generator');
 
