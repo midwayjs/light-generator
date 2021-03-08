@@ -42,7 +42,7 @@ export abstract class CommonGenerator {
             }
 
             // normalize path for windows
-            config.replaceFile = config.replaceFile.map((item) => {
+            config.replaceFile = config.replaceFile.map(item => {
               return normalize(item);
             });
 
@@ -106,9 +106,7 @@ export abstract class CommonGenerator {
       await ensureDir(servicePath);
     }
 
-    let templateConfig = (await this.getTemplateConfig()) as Partial<
-      TemplatePackageConfig
-    >;
+    let templateConfig = (await this.getTemplateConfig()) as Partial<TemplatePackageConfig>;
     let templateRoot = this.getTemplatePath();
     const packageRoot = templateRoot;
     if (templateConfig) {
@@ -156,7 +154,11 @@ export abstract class CommonGenerator {
     }
   }
 
-  async runScript(packageRoot: string, runString: string, runArgs: object) {
+  async runScript(
+    packageRoot: string,
+    runString: string,
+    runArgs: Record<string, unknown>
+  ) {
     const fn = isAbsolute(runString)
       ? require(runString)
       : require(join(packageRoot, runString));
