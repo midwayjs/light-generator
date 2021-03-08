@@ -7,7 +7,6 @@ import { dirExistsSync } from '../util/fs';
 import * as tar from 'tar';
 import { getTmpDir, renamePackageName } from '../util/';
 import { debuglog as Debuglog } from 'util';
-import Spin from 'light-spinner';
 
 export class NpmPatternGenerator extends CommonGenerator {
   npmClient: string;
@@ -48,19 +47,11 @@ export class NpmPatternGenerator extends CommonGenerator {
       const cmd = `${this.npmClient} pack ${this.templateUri}@${remoteVersion} ${this.registryUrl}&& mkdir ${this.pkgRootName}`;
       this.debugLogger('download cmd = [%s]', cmd);
 
-      // create spin
-      const spin = new Spin({
-        text: 'Downloading, please wait a moment',
-      });
-      spin.start();
       // run download
       execSync(cmd, {
         cwd: this.tmpPath,
         stdio: ['pipe', 'ignore', 'pipe'],
       });
-
-      spin.text = 'Download Complete';
-      spin.stop();
 
       await tar.x({
         file: join(this.tmpPath, `${this.pkgRootName}.tgz`),
