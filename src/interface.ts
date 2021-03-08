@@ -1,3 +1,5 @@
+import EventEmitter from 'events';
+
 export type CopyRule = (
   currentFile: string,
   copyRuleOptions: CopyRuleOptions
@@ -13,6 +15,7 @@ export interface CommonGeneratorOptions {
   targetPath: string;
   templateName?: string;
   copyWalker: CopyWalker;
+  eventCenter: EventEmitter
 }
 
 export interface NpmGeneratorOptions extends CommonGeneratorOptions {
@@ -36,4 +39,15 @@ export interface CopyRuleOptions {
   replaceParameter: object;
   templateConfig: TemplatePackageConfig;
   filenameMapping: Map<string, string>;
+}
+
+export enum GeneratorEventEnum {
+  /**
+   * 模板下载完毕，准备开始创建
+   */
+  onTemplateReady = 'onTemplateReady',
+  /**
+   * 目标文件被创建
+   */
+  onFileCreate = 'onFileCreate',
 }

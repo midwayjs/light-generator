@@ -1,18 +1,22 @@
 import * as path from 'path';
 import * as fse from 'fs-extra';
 import { walkDirSync } from './walkDirSync';
-import { CopyRule, CopyWalker, TemplatePackageConfig } from '../interface';
+import { CopyRule, CopyWalker, GeneratorEventEnum, TemplatePackageConfig } from '../interface';
+import EventEmitter from 'events';
 const debug = require('util').debuglog('generator');
 
 export class DirectoryCopyWalker implements CopyWalker {
   rules;
+  eventCenter: EventEmitter;
 
   constructor(
     options: {
       rules?: CopyRule[];
+      eventCenter?: EventEmitter;
     } = {}
   ) {
     this.rules = options.rules || [];
+    this.eventCenter = options.eventCenter;
   }
 
   addCopyRule(rule: CopyRule) {
@@ -52,6 +56,12 @@ export class DirectoryCopyWalker implements CopyWalker {
       const relativeFilePath = path.relative(srcDir, fullFilePath);
       const targetFilePath = path.join(destDir, relativeFilePath);
       await fse.copy(fullFilePath, path.join(destDir, relativeFilePath));
+      this.eventCenter.emit(GeneratorEventEnum.onFileCreate, {
+        sourceFullFilePath: fullFilePath,
+        targetFullFilePath: path.join(destDir, relativeFilePath),
+        destDir,
+        relativeFilePath,
+      });
       debug(`-> ${relativeFilePath}`);
       for (const rule of this.rules) {
         await rule(targetFilePath, {

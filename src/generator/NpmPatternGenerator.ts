@@ -15,7 +15,6 @@ export class NpmPatternGenerator extends CommonGenerator {
   pkgRootName: string;
   registryUrl: string;
 
-
   constructor(options: NpmGeneratorOptions) {
     super(options);
     this.npmClient = options.npmClient;
@@ -67,7 +66,7 @@ export class NpmPatternGenerator extends CommonGenerator {
         const pkg = require(join(currentPkgRoot, 'package.json'));
         if (pkg['dependencies']) {
           debugLogger('find package.json and dependencies');
-          const installCmd = `${this.npmClient} install --production`;
+          const installCmd = `${this.npmClient} ${this.registryUrl} install --production`;
           execSync(installCmd, {
             cwd: currentPkgRoot,
             stdio: ['pipe', 'ignore', 'pipe'],
