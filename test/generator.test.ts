@@ -11,6 +11,7 @@ import {
 } from 'fs-extra';
 import assert from 'assert';
 import { getTmpDir } from '../src/util/';
+import { tmpdir } from 'os';
 
 async function assertThrowsAsync(fn, regExp) {
   let f = () => {};
@@ -249,6 +250,24 @@ describe('/test/generator.test.ts', () => {
       assert(existsSync(join(targetPath, 'f.yml')));
       assert(existsSync(join(targetPath, 'build.json')));
       assert(existsSync(join(targetPath, 'src/pages')));
+    });
+
+    it('should generate template with install', async () => {
+      const newTargetPath = join(tmpdir(), './bbb/tmp');
+      await remove(newTargetPath);
+      await emptyDir(newTargetPath);
+      const npmGenerator = new LightGenerator().defineNpmPackage({
+        npmPackage: '@midwayjs-examples/applicaiton-web',
+        targetPath: newTargetPath,
+        registryUrl: 'https://r.npm.taobao.org',
+      });
+
+      await npmGenerator.run();
+
+      assert(existsSync(join(newTargetPath, 'package.json')));
+      assert(existsSync(join(newTargetPath, 'src')));
+
+      await emptyDir(newTargetPath);
     });
   });
 });

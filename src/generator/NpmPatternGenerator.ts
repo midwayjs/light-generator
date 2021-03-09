@@ -3,7 +3,7 @@ import { NpmGeneratorOptions } from '../interface';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import * as fse from 'fs-extra';
-import { dirExistsSync } from '../util/fs';
+import { dirExistsSync, fileExistsSync } from '../util/fs';
 import * as tar from 'tar';
 import { getTmpDir, renamePackageName } from '../util/';
 import { debuglog as Debuglog } from 'util';
@@ -38,7 +38,12 @@ export class NpmPatternGenerator extends CommonGenerator {
       this.templateUri
     )}-${remoteVersion}`;
     const currentPkgRoot = this.getTemplatePath();
-    debugLogger('currentPkgRoot = [%s]', currentPkgRoot);
+    debugLogger('currentPkgRoot = [%s], tmpPath = [%s]', currentPkgRoot, this.tmpPath);
+    // 清理失败的模板
+    if (dirExistsSync(currentPkgRoot) && !fileExistsSync(join(currentPkgRoot, '.success'))) {
+      await fse.remove(currentPkgRoot);
+    }
+
     if (!dirExistsSync(currentPkgRoot)) {
       // clean template directory first
       if (dirExistsSync(join(this.tmpPath, this.pkgRootName))) {
@@ -74,6 +79,8 @@ export class NpmPatternGenerator extends CommonGenerator {
           debugLogger('install dependencies complete');
         }
       }
+
+      await fse.writeFile(join(currentPkgRoot, '.success'), 'complete');
     }
   }
 
