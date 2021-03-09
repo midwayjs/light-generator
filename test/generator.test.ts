@@ -259,7 +259,6 @@ describe('/test/generator.test.ts', () => {
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: '@midwayjs-examples/applicaiton-web',
         targetPath: newTargetPath,
-        registryUrl: 'https://r.npm.taobao.org',
       });
 
       await npmGenerator.run();
