@@ -38,9 +38,16 @@ export class NpmPatternGenerator extends CommonGenerator {
       this.templateUri
     )}-${remoteVersion}`;
     const currentPkgRoot = this.getTemplatePath();
-    debugLogger('currentPkgRoot = [%s], tmpPath = [%s]', currentPkgRoot, this.tmpPath);
+    debugLogger(
+      'currentPkgRoot = [%s], tmpPath = [%s]',
+      currentPkgRoot,
+      this.tmpPath
+    );
     // 清理失败的模板
-    if (dirExistsSync(currentPkgRoot) && !fileExistsSync(join(currentPkgRoot, '.success'))) {
+    if (
+      dirExistsSync(currentPkgRoot) &&
+      !fileExistsSync(join(currentPkgRoot, '.success'))
+    ) {
       await fse.remove(currentPkgRoot);
     }
 
