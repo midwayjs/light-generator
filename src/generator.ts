@@ -6,10 +6,12 @@ import { ignoreRule, replaceRule } from './rule';
 import { getTmpDir } from './util/';
 import { dirExistsSync } from './util/fs';
 import { remove } from 'fs-extra';
+import EventEmitter from 'events';
 
 export class LightGenerator {
   options;
   copyWalker: CopyWalker;
+  eventCenter: EventEmitter;
 
   constructor(
     options: {
@@ -18,7 +20,12 @@ export class LightGenerator {
     } = { disableDefaultRule: false }
   ) {
     this.options = options;
-    this.copyWalker = new DirectoryCopyWalker(this.options);
+    this.eventCenter = new EventEmitter();
+    this.copyWalker = new DirectoryCopyWalker(
+      Object.assign(this.options, {
+        eventCenter: this.eventCenter,
+      })
+    );
     if (!this.options.disableDefaultRule) {
       this.addDefaultCopyRule();
     }
@@ -39,6 +46,7 @@ export class LightGenerator {
       targetPath: options.targetPath,
       templateName: options.templateName,
       copyWalker: this.copyWalker,
+      eventCenter: this.eventCenter,
     });
   }
 
@@ -54,6 +62,7 @@ export class LightGenerator {
       copyWalker: this.copyWalker,
       npmClient: options.npmClient || 'npm',
       registryUrl: options.registryUrl,
+      eventCenter: this.eventCenter,
     });
   }
 

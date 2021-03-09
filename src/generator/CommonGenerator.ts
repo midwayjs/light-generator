@@ -1,6 +1,7 @@
 import {
   CommonGeneratorOptions,
   CopyWalker,
+  GeneratorEventEnum,
   TemplatePackageConfig,
 } from '../interface';
 import { isAbsolute, join, normalize } from 'path';
@@ -8,6 +9,7 @@ import { dirExistsSync, fileExistsSync, readFileSync } from '../util/fs';
 import { ensureDir } from 'fs-extra';
 import untildify from 'untildify';
 import emptyDir from 'empty-dir';
+import EventEmitter from 'events';
 
 export abstract class CommonGenerator {
   copyWalker: CopyWalker;
@@ -15,12 +17,14 @@ export abstract class CommonGenerator {
   targetPath: string;
   templateName: string;
   templateConfig: TemplatePackageConfig;
+  eventCenter: EventEmitter;
 
   constructor(options: CommonGeneratorOptions) {
     this.templateUri = options.templateUri;
     this.targetPath = options.targetPath;
     this.copyWalker = options.copyWalker;
     this.templateName = options.templateName;
+    this.eventCenter = options.eventCenter;
   }
 
   /**
@@ -42,7 +46,7 @@ export abstract class CommonGenerator {
             }
 
             // normalize path for windows
-            config.replaceFile = config.replaceFile.map((item) => {
+            config.replaceFile = config.replaceFile.map(item => {
               return normalize(item);
             });
 
@@ -106,9 +110,7 @@ export abstract class CommonGenerator {
       await ensureDir(servicePath);
     }
 
-    let templateConfig = (await this.getTemplateConfig()) as Partial<
-      TemplatePackageConfig
-    >;
+    let templateConfig = (await this.getTemplateConfig()) as Partial<TemplatePackageConfig>;
     let templateRoot = this.getTemplatePath();
     const packageRoot = templateRoot;
     if (templateConfig) {
@@ -124,6 +126,8 @@ export abstract class CommonGenerator {
         rule: [],
       };
     }
+
+    this.eventCenter.emit(GeneratorEventEnum.onTemplateReady);
 
     const defaultArgsValue = await this.getDefaultParameterValue();
     replaceParameter = Object.assign(defaultArgsValue, replaceParameter);
@@ -156,13 +160,32 @@ export abstract class CommonGenerator {
     }
   }
 
-  async runScript(packageRoot: string, runString: string, runArgs: object) {
+  async runScript(
+    packageRoot: string,
+    runString: string,
+    runArgs: Record<string, unknown>
+  ) {
     const fn = isAbsolute(runString)
       ? require(runString)
       : require(join(packageRoot, runString));
     if (fn && typeof fn === 'function') {
       await fn(runArgs);
     }
+  }
+
+  onTemplateReady(handler: () => void) {
+    this.eventCenter.on(GeneratorEventEnum.onTemplateReady, handler);
+  }
+
+  onFileCreated(
+    handler: (data: {
+      sourceFullFilePath: string;
+      targetFullFilePath: string;
+      destDir: string;
+      relativeFilePath: string;
+    }) => void
+  ) {
+    this.eventCenter.on(GeneratorEventEnum.onFileCreate, handler);
   }
 
   abstract getTemplatePath(): string;

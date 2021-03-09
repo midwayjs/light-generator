@@ -7,14 +7,13 @@ import { dirExistsSync } from '../util/fs';
 import * as tar from 'tar';
 import { getTmpDir, renamePackageName } from '../util/';
 import { debuglog as Debuglog } from 'util';
-import Spin from 'light-spinner';
+const debugLogger = Debuglog('generator:npm');
 
 export class NpmPatternGenerator extends CommonGenerator {
   npmClient: string;
   tmpPath: string;
   pkgRootName: string;
   registryUrl: string;
-  debugLogger = Debuglog('generator:npm');
 
   constructor(options: NpmGeneratorOptions) {
     super(options);
@@ -24,7 +23,7 @@ export class NpmPatternGenerator extends CommonGenerator {
       : '';
     this.tmpPath = getTmpDir();
     fse.ensureDirSync(this.tmpPath);
-    this.debugLogger('current npm module = [%s]', this.npmClient);
+    debugLogger('current npm module = [%s]', this.npmClient);
   }
 
   private async getPackage() {
@@ -39,28 +38,20 @@ export class NpmPatternGenerator extends CommonGenerator {
       this.templateUri
     )}-${remoteVersion}`;
     const currentPkgRoot = this.getTemplatePath();
-    this.debugLogger('currentPkgRoot = [%s]', currentPkgRoot);
+    debugLogger('currentPkgRoot = [%s]', currentPkgRoot);
     if (!dirExistsSync(currentPkgRoot)) {
       // clean template directory first
       if (dirExistsSync(join(this.tmpPath, this.pkgRootName))) {
         await fse.remove(join(this.tmpPath, this.pkgRootName));
       }
       const cmd = `${this.npmClient} pack ${this.templateUri}@${remoteVersion} ${this.registryUrl}&& mkdir ${this.pkgRootName}`;
-      this.debugLogger('download cmd = [%s]', cmd);
+      debugLogger('download cmd = [%s]', cmd);
 
-      // create spin
-      const spin = new Spin({
-        text: 'Downloading, please wait a moment',
-      });
-      spin.start();
       // run download
       execSync(cmd, {
         cwd: this.tmpPath,
         stdio: ['pipe', 'ignore', 'pipe'],
       });
-
-      spin.text = 'Download Complete';
-      spin.stop();
 
       await tar.x({
         file: join(this.tmpPath, `${this.pkgRootName}.tgz`),
@@ -74,13 +65,13 @@ export class NpmPatternGenerator extends CommonGenerator {
       if (fse.existsSync(join(currentPkgRoot, 'package.json'))) {
         const pkg = require(join(currentPkgRoot, 'package.json'));
         if (pkg['dependencies']) {
-          this.debugLogger('find package.json and dependencies');
-          const installCmd = `${this.npmClient} install --production`;
+          debugLogger('find package.json and dependencies');
+          const installCmd = `${this.npmClient} ${this.registryUrl} install --production`;
           execSync(installCmd, {
             cwd: currentPkgRoot,
             stdio: ['pipe', 'ignore', 'pipe'],
           });
-          this.debugLogger('install dependencies complete');
+          debugLogger('install dependencies complete');
         }
       }
     }

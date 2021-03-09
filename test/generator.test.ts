@@ -44,6 +44,12 @@ describe('/test/generator.test.ts', () => {
         templatePath: join(__dirname, './fixtures/boilerplate-0'),
         targetPath,
       });
+      localGenerator.onTemplateReady(() => {
+        console.log('ready');
+      });
+      localGenerator.onFileCreated((data) => {
+        console.log(data.relativeFilePath);
+      });
       await localGenerator.run();
       assert(existsSync(join(targetPath, 'package.json')));
       assert(existsSync(join(targetPath, 'README.md')));
@@ -231,7 +237,7 @@ describe('/test/generator.test.ts', () => {
       assert(!existsSync(getTmpDir()));
     });
 
-    it('shoud gererate directory from npm boilerplate use before and after', async () => {
+    it('should generate directory from npm boilerplate use before and after', async () => {
       const npmGenerator = new LightGenerator().defineNpmPackage({
         npmPackage: '@midwayjs/generator-test-boilerplate',
         targetPath,
