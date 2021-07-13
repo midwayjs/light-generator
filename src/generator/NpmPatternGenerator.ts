@@ -14,6 +14,7 @@ export class NpmPatternGenerator extends CommonGenerator {
   tmpPath: string;
   pkgRootName: string;
   registryUrl: string;
+  targetVersion: string;
 
   constructor(options: NpmGeneratorOptions) {
     super(options);
@@ -22,6 +23,7 @@ export class NpmPatternGenerator extends CommonGenerator {
       ? '--registry=' + options.registryUrl
       : '';
     this.tmpPath = getTmpDir();
+    this.targetVersion = options.targetVersion;
     fse.ensureDirSync(this.tmpPath);
     debugLogger('current npm module = [%s]', this.npmClient);
   }
@@ -33,7 +35,7 @@ export class NpmPatternGenerator extends CommonGenerator {
         cwd: process.env.HOME,
       }
     ).toString();
-    const remoteVersion = JSON.parse(data)['latest'];
+    const remoteVersion = JSON.parse(data)[this.targetVersion || 'latest'];
     this.pkgRootName = `${renamePackageName(
       this.templateUri
     )}-${remoteVersion}`;

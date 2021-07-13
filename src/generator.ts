@@ -55,6 +55,7 @@ export class LightGenerator {
     targetPath: string;
     npmClient?: string;
     registryUrl?: string;
+    targetVersion?: string;
   }) {
     return new NpmPatternGenerator({
       templateUri: options.npmPackage,
@@ -63,6 +64,7 @@ export class LightGenerator {
       npmClient: options.npmClient || 'npm',
       registryUrl: options.registryUrl,
       eventCenter: this.eventCenter,
+      targetVersion: options.targetVersion || 'latest',
     });
   }
 
