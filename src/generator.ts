@@ -57,11 +57,16 @@ export class LightGenerator {
     registryUrl?: string;
     targetVersion?: string;
   }) {
+    let npmClient = options.npmClient || 'npm';
+    // 内部执行的命令，yarn 没有，所以固化为 npm
+    if (npmClient === 'yarn') {
+      npmClient = 'npm';
+    }
     return new NpmPatternGenerator({
       templateUri: options.npmPackage,
       targetPath: options.targetPath,
       copyWalker: this.copyWalker,
-      npmClient: options.npmClient || 'npm',
+      npmClient,
       registryUrl: options.registryUrl,
       eventCenter: this.eventCenter,
       targetVersion: options.targetVersion || 'latest',
