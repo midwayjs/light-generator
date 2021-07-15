@@ -1,6 +1,6 @@
 {
   "name": "light-generator",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "description": "light generator for generate a boilerplate",
   "main": "dist/index",
   "typings": "dist/index.d.ts",
