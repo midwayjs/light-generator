@@ -15,12 +15,12 @@ export class NpmPatternGenerator extends CommonGenerator {
   pkgRootName: string;
   registryUrl: string;
   targetVersion: string;
-  skipNpmInstall: boolean;
+  npmInstall: boolean;
 
   constructor(options: NpmGeneratorOptions) {
     super(options);
     this.npmClient = options.npmClient;
-    this.skipNpmInstall = !!options.skipNpmInstall;
+    this.npmInstall = !!options.npmInstall;
     this.registryUrl = options.registryUrl
       ? '--registry=' + options.registryUrl
       : '';
@@ -78,7 +78,7 @@ export class NpmPatternGenerator extends CommonGenerator {
         throw new Error(`${currentPkgRoot} package download error`);
       }
 
-      if (!this.skipNpmInstall && fse.existsSync(join(currentPkgRoot, 'package.json'))) {
+      if (this.npmInstall && fse.existsSync(join(currentPkgRoot, 'package.json'))) {
         const pkg = require(join(currentPkgRoot, 'package.json'));
         if (pkg['dependencies']) {
           debugLogger('find package.json and dependencies');

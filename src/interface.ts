@@ -22,7 +22,7 @@ export interface NpmGeneratorOptions extends CommonGeneratorOptions {
   npmClient?: string;
   registryUrl?: string;
   targetVersion?: string;
-  skipNpmInstall?: boolean;
+  npmInstall?: boolean;
 }
 
 export interface TemplatePackageConfig {

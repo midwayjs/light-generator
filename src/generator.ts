@@ -57,7 +57,7 @@ export class LightGenerator {
     registryUrl?: string;
     targetVersion?: string;
     // 可以选择跳过安装依赖
-    skipNpmInstall?: boolean;
+    npmInstall?: boolean;
   }) {
     let npmClient = options.npmClient || 'npm';
     // 内部执行的命令，yarn 没有，所以固化为 npm
@@ -71,7 +71,7 @@ export class LightGenerator {
       npmClient,
       registryUrl: options.registryUrl,
       eventCenter: this.eventCenter,
-      skipNpmInstall: !!options.skipNpmInstall,
+      npmInstall: !Boolean(options.npmInstall), // 默认安装，可选择跳过
       targetVersion: options.targetVersion || 'latest',
     });
   }
