@@ -56,7 +56,7 @@ export class LightGenerator {
     npmClient?: string;
     registryUrl?: string;
     targetVersion?: string;
-	// 可以选择跳过安装依赖
+    // 可以选择跳过安装依赖
     skipNpmInstall?: boolean;
   }) {
     let npmClient = options.npmClient || 'npm';
@@ -71,7 +71,7 @@ export class LightGenerator {
       npmClient,
       registryUrl: options.registryUrl,
       eventCenter: this.eventCenter,
-	  skipNpmInstall: !!options.skipNpmInstall,
+      skipNpmInstall: !!options.skipNpmInstall,
       targetVersion: options.targetVersion || 'latest',
     });
   }

@@ -20,7 +20,7 @@ export class NpmPatternGenerator extends CommonGenerator {
   constructor(options: NpmGeneratorOptions) {
     super(options);
     this.npmClient = options.npmClient;
-	this.skipNpmInstall = !!options.skipNpmInstall;
+    this.skipNpmInstall = !!options.skipNpmInstall;
     this.registryUrl = options.registryUrl
       ? '--registry=' + options.registryUrl
       : '';
