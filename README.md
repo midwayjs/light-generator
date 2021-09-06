@@ -19,7 +19,8 @@ import {LightGenerator} from 'light-generator';
 
 const generator = new LightGenerator().defineNpmPackage({
   npmPackage: 'egg-boilerplate-simple',
-  targetPath
+  targetPath,
+  npmInstall: true,
 });
 
 await generator.run({

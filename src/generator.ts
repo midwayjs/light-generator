@@ -56,12 +56,16 @@ export class LightGenerator {
     npmClient?: string;
     registryUrl?: string;
     targetVersion?: string;
+    // 可以选择跳过安装依赖
+    npmInstall?: boolean;
   }) {
     let npmClient = options.npmClient || 'npm';
     // 内部执行的命令，yarn 没有，所以固化为 npm
     if (npmClient === 'yarn') {
       npmClient = 'npm';
     }
+    // 默认安装，可选择跳过
+    const npmInstall = typeof options.npmInstall === 'boolean' ? options.npmInstall : true;
     return new NpmPatternGenerator({
       templateUri: options.npmPackage,
       targetPath: options.targetPath,
@@ -69,6 +73,7 @@ export class LightGenerator {
       npmClient,
       registryUrl: options.registryUrl,
       eventCenter: this.eventCenter,
+      npmInstall,
       targetVersion: options.targetVersion || 'latest',
     });
   }
