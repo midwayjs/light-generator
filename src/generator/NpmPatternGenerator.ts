@@ -31,12 +31,29 @@ export class NpmPatternGenerator extends CommonGenerator {
   }
 
   private async getPackage() {
-    const data = execSync(
-      `${this.npmClient} view ${this.templateUri} dist-tags --json ${this.registryUrl}`,
-      {
-        cwd: process.env.HOME,
-      }
-    ).toString();
+    const cmd = `${this.npmClient} view ${this.templateUri} dist-tags --json ${this.registryUrl}`;
+    const backupCmd = `npm view ${this.templateUri} dist-tags --json`;
+    let failOnce = false;
+    let data;
+    try {
+      data = execSync(
+        cmd,
+        {
+          cwd: process.env.HOME,
+        }
+      ).toString();
+    } catch (err) {
+      failOnce = true;
+      console.warn(`[Generator]: "${cmd}" find version failed and try with npm`);
+      debugLogger(`err = ${err.message}`);
+      data = execSync(
+        backupCmd,
+        {
+          cwd: process.env.HOME,
+        }
+      ).toString();
+    }
+
     const remoteVersion = JSON.parse(data)[this.targetVersion || 'latest'];
     this.pkgRootName = `${renamePackageName(
       this.templateUri
@@ -61,14 +78,27 @@ export class NpmPatternGenerator extends CommonGenerator {
         await fse.remove(join(this.tmpPath, this.pkgRootName));
       }
       const cmd = `${this.npmClient} pack ${this.templateUri}@${remoteVersion} ${this.registryUrl}&& mkdir ${this.pkgRootName}`;
+      const backupCmd = `npm pack ${this.templateUri}@${remoteVersion} && mkdir ${this.pkgRootName}`;
       debugLogger('download cmd = [%s]', cmd);
 
       // run download
-      execSync(cmd, {
-        cwd: this.tmpPath,
-        stdio: ['pipe', 'ignore', 'pipe'],
-      });
 
+      try {
+        execSync(cmd, {
+          cwd: this.tmpPath,
+          stdio: ['pipe', 'ignore', 'pipe'],
+        });
+      } catch (err) {
+        failOnce = true;
+        console.warn(`[Generator]: "${cmd}" download template failed and try with npm`);
+        debugLogger(`err = ${err.message}`);
+        // 兜底使用 npm 下载模板
+        execSync(backupCmd, {
+          cwd: this.tmpPath,
+          stdio: ['pipe', 'ignore', 'pipe'],
+        });
+      }
+      // 解压包
       await tar.x({
         file: join(this.tmpPath, `${this.pkgRootName}.tgz`),
         C: join(this.tmpPath, this.pkgRootName),
@@ -78,7 +108,10 @@ export class NpmPatternGenerator extends CommonGenerator {
         throw new Error(`${currentPkgRoot} package download error`);
       }
 
-      if (this.npmInstall && fse.existsSync(join(currentPkgRoot, 'package.json'))) {
+      // 标记模板包下载成功
+      await fse.writeFile(join(currentPkgRoot, '.success'), 'complete');
+
+      if (!failOnce && this.npmInstall && fse.existsSync(join(currentPkgRoot, 'package.json'))) {
         const pkg = require(join(currentPkgRoot, 'package.json'));
         if (pkg['dependencies']) {
           debugLogger('find package.json and dependencies');
@@ -91,7 +124,11 @@ export class NpmPatternGenerator extends CommonGenerator {
         }
       }
 
-      await fse.writeFile(join(currentPkgRoot, '.success'), 'complete');
+      if (failOnce) {
+        console.warn(`[Generator]: Code directory has created,but dependencies are not automatically installed.`);
+        console.warn(`[Generator]: Please enter the code directory and run "npm install" manually`);
+        console.warn(`[Generator]: Please ignore the prompt for correct output`);
+      }
     }
   }
 
