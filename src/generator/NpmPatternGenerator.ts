@@ -36,22 +36,18 @@ export class NpmPatternGenerator extends CommonGenerator {
     let failOnce = false;
     let data;
     try {
-      data = execSync(
-        cmd,
-        {
-          cwd: process.env.HOME,
-        }
-      ).toString();
+      data = execSync(cmd, {
+        cwd: process.env.HOME,
+      }).toString();
     } catch (err) {
       failOnce = true;
-      console.warn(`[Generator]: "${cmd}" find version failed and try with npm`);
+      console.warn(
+        `[Generator]: "${cmd}" find version failed and try with npm`
+      );
       debugLogger(`err = ${err.message}`);
-      data = execSync(
-        backupCmd,
-        {
-          cwd: process.env.HOME,
-        }
-      ).toString();
+      data = execSync(backupCmd, {
+        cwd: process.env.HOME,
+      }).toString();
     }
 
     const remoteVersion = JSON.parse(data)[this.targetVersion || 'latest'];
@@ -90,7 +86,9 @@ export class NpmPatternGenerator extends CommonGenerator {
         });
       } catch (err) {
         failOnce = true;
-        console.warn(`[Generator]: "${cmd}" download template failed and try with npm`);
+        console.warn(
+          `[Generator]: "${cmd}" download template failed and try with npm`
+        );
         debugLogger(`err = ${err.message}`);
         // 兜底使用 npm 下载模板
         execSync(backupCmd, {
@@ -111,11 +109,18 @@ export class NpmPatternGenerator extends CommonGenerator {
       // 标记模板包下载成功
       await fse.writeFile(join(currentPkgRoot, '.success'), 'complete');
 
-      if (!failOnce && this.npmInstall && fse.existsSync(join(currentPkgRoot, 'package.json'))) {
+      // 这里的依赖是模板的依赖，并非项目的依赖
+      if (
+        this.npmInstall &&
+        fse.existsSync(join(currentPkgRoot, 'package.json'))
+      ) {
         const pkg = require(join(currentPkgRoot, 'package.json'));
         if (pkg['dependencies']) {
           debugLogger('find package.json and dependencies');
-          const installCmd = `${this.npmClient} ${this.registryUrl} install --production`;
+          let installCmd = `${this.npmClient} ${this.registryUrl} install --production`;
+          if (failOnce) {
+            installCmd = 'npm install --production';
+          }
           execSync(installCmd, {
             cwd: currentPkgRoot,
             stdio: ['pipe', 'ignore', 'pipe'],
@@ -125,9 +130,15 @@ export class NpmPatternGenerator extends CommonGenerator {
       }
 
       if (failOnce) {
-        console.warn(`[Generator]: Code directory has created,but dependencies are not automatically installed.`);
-        console.warn(`[Generator]: Please enter the code directory and run "npm install" manually`);
-        console.warn(`[Generator]: Please ignore the prompt for correct output`);
+        console.warn(
+          '[Generator]: Code directory has created and dependencies may be not complete installed.'
+        );
+        console.warn(
+          '[Generator]: Please enter the code directory and run "npm install" manually after remove node_modules and lock file.'
+        );
+        console.warn(
+          '[Generator]: Please ignore the prompt for correct output'
+        );
       }
     }
   }

@@ -65,7 +65,8 @@ export class LightGenerator {
       npmClient = 'npm';
     }
     // 默认安装，可选择跳过
-    const npmInstall = typeof options.npmInstall === 'boolean' ? options.npmInstall : true;
+    const npmInstall =
+      typeof options.npmInstall === 'boolean' ? options.npmInstall : true;
     return new NpmPatternGenerator({
       templateUri: options.npmPackage,
       targetPath: options.targetPath,
