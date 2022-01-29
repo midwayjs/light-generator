@@ -131,13 +131,13 @@ export class NpmPatternGenerator extends CommonGenerator {
 
       if (failOnce) {
         console.warn(
-          `[Generator]: Code directory has created and dependencies may be not complete installed.`
+          '[Generator]: Code directory has created and dependencies may be not complete installed.'
         );
         console.warn(
-          `[Generator]: Please enter the code directory and run "npm install" manually after remove node_modules and lock file.`
+          '[Generator]: Please enter the code directory and run "npm install" manually after remove node_modules and lock file.'
         );
         console.warn(
-          `[Generator]: Please ignore the prompt for correct output`
+          '[Generator]: Please ignore the prompt for correct output'
         );
       }
     }
