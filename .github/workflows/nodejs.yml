@@ -8,13 +8,16 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        # Node 24 自带 npm 12，用于覆盖 `npm view --json` 数组输出的回归场景；
+        # 其余 LTS 版本覆盖 npm 10/11 的对象输出路径。
+        node-version: [18.x, 20.x, 22.x, 24.x]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install && npm install codecov
@@ -27,13 +30,14 @@ jobs:
       runs-on: windows-latest
 
       strategy:
+        fail-fast: false
         matrix:
-          node-version: [10.x, 12.x, 14.x]
+          node-version: [18.x, 20.x, 22.x, 24.x]
 
       steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install && npm install codecov

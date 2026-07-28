@@ -50,7 +50,18 @@ export class NpmPatternGenerator extends CommonGenerator {
       }).toString();
     }
 
-    const remoteVersion = JSON.parse(data)[this.targetVersion || 'latest'];
+    // npm 12+ 起 `npm view --json` 始终返回数组（即使只有一个结果），
+    // npm 11 及以下返回对象，这里同时兼容两种输出格式。
+    const parsed = JSON.parse(data);
+    const distTags = Array.isArray(parsed) ? parsed[0] : parsed;
+    const remoteVersion = distTags[this.targetVersion || 'latest'];
+    if (!remoteVersion) {
+      throw new Error(
+        `[Generator]: cannot resolve "${
+          this.targetVersion || 'latest'
+        }" version from ${this.templateUri}, npm view output: ${data}`
+      );
+    }
     this.pkgRootName = `${renamePackageName(
       this.templateUri
     )}-${remoteVersion}`;

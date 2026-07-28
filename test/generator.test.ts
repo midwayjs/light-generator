@@ -173,7 +173,7 @@ describe('/test/generator.test.ts', () => {
         description: 'hello',
       });
       assert(existsSync(join(targetPath, 'package.json')));
-      assert(existsSync(join(targetPath, '.autod.conf')));
+      assert(existsSync(join(targetPath, 'README.md')));
 
       await remove(targetPath);
 
@@ -211,7 +211,7 @@ describe('/test/generator.test.ts', () => {
         description: 'hello',
       });
       assert(existsSync(join(targetPath, 'package.json')));
-      assert(existsSync(join(targetPath, '.autod.conf')));
+      assert(existsSync(join(targetPath, 'README.md')));
 
       await remove(targetPath);
 
