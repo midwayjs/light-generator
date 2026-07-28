@@ -173,7 +173,8 @@ describe('/test/generator.test.ts', () => {
         description: 'hello',
       });
       assert(existsSync(join(targetPath, 'package.json')));
-      assert(existsSync(join(targetPath, '.autod.conf')));
+      // egg-boilerplate-simple@3.7.0 起不再携带 .autod.conf，改为检查 app 目录
+      assert(existsSync(join(targetPath, 'app')));
 
       await remove(targetPath);
 
@@ -211,7 +212,8 @@ describe('/test/generator.test.ts', () => {
         description: 'hello',
       });
       assert(existsSync(join(targetPath, 'package.json')));
-      assert(existsSync(join(targetPath, '.autod.conf')));
+      // egg-boilerplate-simple@3.7.0 起不再携带 .autod.conf，改为检查 app 目录
+      assert(existsSync(join(targetPath, 'app')));
 
       await remove(targetPath);
 
