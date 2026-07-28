@@ -1,4 +1,11 @@
 
+1.12.0 / 2026-07-28
+===================
+
+  * fix: support npm 12 `npm view --json` array output (#32)
+  * ci: upgrade node matrix to 18/20/22/24 for npm 12 regression coverage
+  * test: fix egg-boilerplate-simple assertions for v3.7.0
+
 1.11.2 / 2022-01-29
 ===================
 
